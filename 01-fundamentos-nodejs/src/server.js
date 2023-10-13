@@ -9,9 +9,10 @@ const server = http.createServer(async (req, res) => {
 
   const currentRoute = routes.find(route =>
     route.method === method &&
-    route.path === url)
+    route.path.test(url))
 
-  if(currentRoute) {
+  if (currentRoute) {
+    req.params = { ...req.url.match(currentRoute.path).groups }
     return currentRoute.handler(req, res)
   }
 
