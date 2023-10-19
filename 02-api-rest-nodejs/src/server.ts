@@ -1,13 +1,12 @@
 import fastify from 'fastify'
-import { dbClient } from './database'
+import cookie from '@fastify/cookie'
 import { env } from './env'
+import { transactionsRoutes } from './routes/transactions'
 
 const app = fastify()
 
-app.get('/', async () => {
-  const tables = await dbClient('sqlite_schema').select('*')
-  return tables
-})
+void app.register(cookie)
+void app.register(transactionsRoutes, { prefix: 'transactions' })
 
 app.listen({ port: env.PORT })
   .then(() => { console.log('HTTP Server Running.') })
