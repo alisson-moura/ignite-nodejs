@@ -1,15 +1,8 @@
-import Fastify from 'fastify'
+import { fastify } from './app'
+import { env } from './env'
 
-const fastify = Fastify({
-  logger: true
-})
-
-fastify.get('/', async function handler (request, reply) {
-  return { hello: 'world' }
-})
-
-fastify.listen({ port: 3000 })
-  .then(() => { console.log('API is running on: http://localhost:3000') })
+fastify.listen({ port: env.HTTP_PORT })
+  .then(() => { console.log(`API is running on: http://localhost:${env.HTTP_PORT}`) })
   .catch((err) => {
     fastify.log.error(err)
     process.exit(1)
