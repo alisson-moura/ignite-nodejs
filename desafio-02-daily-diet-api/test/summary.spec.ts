@@ -2,10 +2,10 @@ import { execSync } from 'node:child_process'
 import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
 import request from 'supertest'
 import { fastify } from '../src/app'
+import { object } from 'zod'
 
 let token: string
-let mealId: string
-describe('Atualização de uma refeição', () => {
+describe('Recuperação de Métricas do Usuário', () => {
   beforeAll(async () => {
     await fastify.ready()
   })
@@ -33,8 +33,8 @@ describe('Atualização de uma refeição', () => {
       })
     token = responseToken.body.token
 
-    // create an meal
-    const meal = await request(fastify.server)
+    // create an meal in diet
+    await request(fastify.server)
       .post('/meals')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -42,32 +42,33 @@ describe('Atualização de uma refeição', () => {
         description: 'arroz, feijão e bife',
         dietStatus: true
       })
-    mealId = meal.body.meal.id
-  })
 
-  it('Deve ser possível atualizar uma refeição', async () => {
+    // create an meal out diet
     await request(fastify.server)
-      .put(`/meals/${mealId}`)
+      .post('/meals')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
+        name: 'Janta',
+        description: 'pizza',
         dietStatus: false
       })
-
-    const updatedMeal = await request(fastify.server)
-      .get(`/meals/${mealId}`)
-      .set('Authorization', `Bearer ${token}`)
-
-    expect(updatedMeal.status).toEqual(200)
-    expect(updatedMeal.body).toHaveProperty('meal')
-    expect(updatedMeal.body.meal).toEqual(
-      expect.objectContaining({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
-        dietStatus: 0,
-        id: mealId
-      })
-    )
   })
+
+  it(`Os usuários devem poder obter informações sobre suas métricas, 
+      incluindo a quantidade total de refeições registradas, a quantidade de refeições dentro e fora da dieta, `,
+    async () => {
+      const response = await request(fastify.server)
+        .get('/meals/summary')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(response.status).toEqual(200)
+      expect(response.body).toHaveProperty('summary')
+      expect(response.body.summary).toEqual(
+        expect.objectContaining({
+          amountOfMeals: 2,
+          mealsInDiet: 1,
+          mealsOutDiet: 1
+        })
+      )
+    })
 })

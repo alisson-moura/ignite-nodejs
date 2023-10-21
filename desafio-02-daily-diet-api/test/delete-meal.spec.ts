@@ -5,7 +5,7 @@ import { fastify } from '../src/app'
 
 let token: string
 let mealId: string
-describe('Atualização de uma refeição', () => {
+describe('Remover uma refeição', () => {
   beforeAll(async () => {
     await fastify.ready()
   })
@@ -34,7 +34,7 @@ describe('Atualização de uma refeição', () => {
     token = responseToken.body.token
 
     // create an meal
-    const meal = await request(fastify.server)
+    const responseMeal = await request(fastify.server)
       .post('/meals')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -42,32 +42,20 @@ describe('Atualização de uma refeição', () => {
         description: 'arroz, feijão e bife',
         dietStatus: true
       })
-    mealId = meal.body.meal.id
+    mealId = responseMeal.body.meal.id
   })
 
-  it('Deve ser possível atualizar uma refeição', async () => {
-    await request(fastify.server)
-      .put(`/meals/${mealId}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
-        dietStatus: false
-      })
-
-    const updatedMeal = await request(fastify.server)
-      .get(`/meals/${mealId}`)
+  it('Deve ser possível deletar uma refeição', async () => {
+    const response = await request(fastify.server)
+      .delete(`/meals/${mealId}`)
       .set('Authorization', `Bearer ${token}`)
 
-    expect(updatedMeal.status).toEqual(200)
-    expect(updatedMeal.body).toHaveProperty('meal')
-    expect(updatedMeal.body.meal).toEqual(
-      expect.objectContaining({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
-        dietStatus: 0,
-        id: mealId
-      })
-    )
+    const listMealsResponse = await request(fastify.server)
+      .get('/meals')
+      .set('Authorization', `Bearer ${token}`)
+    const meals = listMealsResponse.body.meals
+
+    expect(response.status).toEqual(204)
+    expect(meals.find((meal: any) => meal.id === mealId)).toEqual(undefined)
   })
 })

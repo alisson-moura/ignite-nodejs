@@ -5,7 +5,7 @@ import { fastify } from '../src/app'
 
 let token: string
 let mealId: string
-describe('Atualização de uma refeição', () => {
+describe('Exbir detalhes de uma refeição', () => {
   beforeAll(async () => {
     await fastify.ready()
   })
@@ -34,7 +34,7 @@ describe('Atualização de uma refeição', () => {
     token = responseToken.body.token
 
     // create an meal
-    const meal = await request(fastify.server)
+    const responseMeal = await request(fastify.server)
       .post('/meals')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -42,32 +42,30 @@ describe('Atualização de uma refeição', () => {
         description: 'arroz, feijão e bife',
         dietStatus: true
       })
-    mealId = meal.body.meal.id
+    mealId = responseMeal.body.meal.id
   })
 
-  it('Deve ser possível atualizar uma refeição', async () => {
-    await request(fastify.server)
-      .put(`/meals/${mealId}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
-        dietStatus: false
-      })
-
-    const updatedMeal = await request(fastify.server)
+  it('Deve ser exibir os detalhes de uma refeição', async () => {
+    const response = await request(fastify.server)
       .get(`/meals/${mealId}`)
       .set('Authorization', `Bearer ${token}`)
 
-    expect(updatedMeal.status).toEqual(200)
-    expect(updatedMeal.body).toHaveProperty('meal')
-    expect(updatedMeal.body.meal).toEqual(
+    expect(response.status).toEqual(200)
+    expect(response.body).toHaveProperty('meal')
+    expect(response.body.meal).toEqual(
       expect.objectContaining({
-        name: 'Almoço atualizado',
-        description: 'arroz, feijão, bife e batata frita',
-        dietStatus: 0,
+        name: 'Almoço',
+        description: 'arroz, feijão e bife',
+        dietStatus: 1,
         id: mealId
       })
     )
+  })
+  it('Deve retornar um erro caso o id informado seja incorreto', async () => {
+    const response = await request(fastify.server)
+      .get('/meals/wrong_id')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toEqual(400)
   })
 })
