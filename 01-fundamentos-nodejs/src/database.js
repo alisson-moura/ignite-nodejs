@@ -11,13 +11,18 @@ export class Database {
       this.#persist()
     })
   }
-  
- #persist() {
-    fs.writeFile(this.#dbUrl, JSON.stringify(this.#database))
- }
 
-  select(table) {
-    return this.#database[table] ?? []
+  #persist() {
+    fs.writeFile(this.#dbUrl, JSON.stringify(this.#database))
+  }
+
+  select(table, search) {
+    let data = this.#database[table] ?? []
+    if (search) {
+      data = data.filter(row => (Object.entries(search).some(([key, value]) => row[key].includes(value))))
+    }
+
+    return data
   }
 
   insert(table, data) {
@@ -34,7 +39,7 @@ export class Database {
   delete(table, id) {
     const rowIndex = this.#database[table].findIndex(item => item.id === id)
 
-    if(rowIndex > -1) {
+    if (rowIndex > -1) {
       this.#database[table].splice(rowIndex, 1)
       this.#persist()
     }
@@ -43,7 +48,7 @@ export class Database {
   update(table, data) {
     const rowIndex = this.#database[table].findIndex(item => item.id === data.id)
 
-    if(rowIndex > -1) {
+    if (rowIndex > -1) {
       this.#database[table][rowIndex] = data
       this.#persist()
     }
