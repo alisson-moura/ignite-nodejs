@@ -1,8 +1,9 @@
 import { app } from "./app";
+import { env } from "./env";
 
 app.listen({
   host: '0.0.0.0',
-  port: 3000
+  port: env.HTTP_PORT
 })
-  .then(() => { console.log('API running is http://localhost:3000') })
+  .then(() => { console.log(`API running on http://localhost:${env.HTTP_PORT}`) })
   .catch(err => { console.log(err) })
