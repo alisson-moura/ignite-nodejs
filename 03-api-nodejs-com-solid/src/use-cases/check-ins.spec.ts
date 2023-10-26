@@ -1,6 +1,6 @@
 import { expect, it, describe, beforeEach, vi, afterEach } from 'vitest';
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository';
-import { CheckInUseCase } from './check-in';
+import { CheckInUseCase } from './check-ins';
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
 import { type GymsRepository } from '@/repositories/gyms-repository';
