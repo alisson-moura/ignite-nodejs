@@ -9,9 +9,9 @@ RFs (Requisitos funcionais)
 [ ] Deve ser possível obter seu histórico de check-ins;
 [ ] Deve ser possível o usuário buscar academias próximas;
 [ ] Deve ser possível o usuário buscar academias pelo nome;
-[ ] Deve ser possível realizar check-in em uma academia;
+[x] Deve ser possível realizar check-in em uma academia;
 [ ] Deve ser possível validar o check-in de um usuário;
-[ ] Deve ser possível cadastrar uma academia;
+[x] Deve ser possível cadastrar uma academia;
 RNs (Regras de negócio)
 [x] O usuário não deve poder se cadastrar com um e-mail duplicado;
 [x] O usuário não pode fazer 2 check-ins no mesmo dia;
