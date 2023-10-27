@@ -11,8 +11,8 @@ export async function create (
   });
   const bodySchema = z.object({
 
-    latitude: z.number().refine((value) => (Math.abs(value) < 90)),
-    longitude: z.number().refine((value) => (Math.abs(value) < 180))
+    latitude: z.coerce.number().refine((value) => (Math.abs(value) < 90)),
+    longitude: z.coerce.number().refine((value) => (Math.abs(value) < 180))
   });
   const { latitude, longitude } = bodySchema.parse(request.body);
   const { gymId } = paramsSchema.parse(request.params);
