@@ -5,6 +5,7 @@ import { profile } from './controllers/users/profile';
 import { verifyJwt } from './hooks/verify-jwt';
 import { checkInsRoutes } from './controllers/check-ins/routes';
 import { gymsRoutes } from './controllers/gyms/routes';
+import { refresh } from './controllers/users/refresh';
 
 export async function privateRoutes (app: FastifyInstance): Promise<void> {
   app.addHook('onRequest', verifyJwt);
@@ -16,4 +17,5 @@ export async function privateRoutes (app: FastifyInstance): Promise<void> {
 export async function publicRoutes (app: FastifyInstance): Promise<void> {
   app.post('/users', register);
   app.post('/sessions', authenticate);
+  app.patch('/token/refresh', refresh);
 }
