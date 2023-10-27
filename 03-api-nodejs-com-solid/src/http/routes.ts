@@ -4,11 +4,12 @@ import { authenticate } from './controllers/authenticate';
 import { profile } from './controllers/profile';
 import { verifyJwt } from './hooks/verify-jwt';
 
-export async function routes (app: FastifyInstance): Promise<void> {
-  app.post('/users', register);
-  app.post('/sessions', authenticate);
-
-  // Authenticate routes
+export async function privateRoutes (app: FastifyInstance): Promise<void> {
   app.addHook('onRequest', verifyJwt);
   app.get('/me', profile);
+}
+
+export async function publicRoutes (app: FastifyInstance): Promise<void> {
+  app.post('/users', register);
+  app.post('/sessions', authenticate);
 }
