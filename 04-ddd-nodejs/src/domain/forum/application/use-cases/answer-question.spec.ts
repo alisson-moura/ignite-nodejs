@@ -1,6 +1,6 @@
-import { AnswerQuestionUseCase } from './answer-question';
+import { type Answer } from '../../enterprise/entities/answer';
 import { type CreateAnswerRepository } from '../repositories/answers-repository';
-import { type Answer } from '../entities/answer';
+import { AnswerQuestionUseCase } from './answer-question';
 
 test('create an answer', async () => {
   const answersRepository: CreateAnswerRepository = {
