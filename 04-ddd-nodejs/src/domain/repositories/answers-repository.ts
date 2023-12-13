@@ -1,8 +1,8 @@
-import { Answer } from "../entities/answer";
+import { type Answer } from '../entities/answer';
 
-export interface AnswersRepository extends 
-CreateAnswerRepository {}
+export interface AnswersRepository extends
+  CreateAnswerRepository {}
 
 export interface CreateAnswerRepository {
-  create (answer: Answer): Promise<void>
+  create: (answer: Answer) => Promise<void>
 }
