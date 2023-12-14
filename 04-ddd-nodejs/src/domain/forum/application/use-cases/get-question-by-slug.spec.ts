@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
 import { type FindQuestionBySlugRepository } from '../repositories/question-repository';
@@ -6,6 +7,13 @@ import { Slug } from '../../enterprise/entities/value-objects/slug';
 
 let questionRepository: FindQuestionBySlugRepository;
 let sut: GetQuestionBySlugUseCase;
+
+const makeFakeQuestion = (slug: Slug): Question => Question.create({
+  authorId: new UniqueEntityId(),
+  content: faker.lorem.text(),
+  title: faker.lorem.sentence(),
+  slug
+});
 
 describe('Create Question Use Case', () => {
   beforeEach(() => {
@@ -18,12 +26,8 @@ describe('Create Question Use Case', () => {
   });
 
   it('should be able to get a question by slug', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(Question.create({
-      authorId: new UniqueEntityId('fake_id'),
-      content: 'fake content',
-      title: 'fake title',
-      slug: new Slug('fake_question')
-    }));
+    vi.spyOn(questionRepository, 'find')
+      .mockResolvedValueOnce(makeFakeQuestion(new Slug('fake_question')));
 
     const { question } = await sut.execute({ slug: 'fake_question' });
 
