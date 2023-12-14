@@ -33,6 +33,7 @@ describe('Create Question Use Case', () => {
 
     expect(question.id).toBeInstanceOf(UniqueEntityId);
   });
+
   it('should throw a error when slug is invalid', async () => {
     await expect(sut.execute({ slug: 'fake_question' }))
       .rejects
