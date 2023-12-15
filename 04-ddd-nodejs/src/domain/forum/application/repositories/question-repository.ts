@@ -10,6 +10,10 @@ export interface CreateQuestionRepository {
   create: (question: Question) => Promise<void>
 }
 
+export interface SaveQuestionRepository {
+  save: (question: Question) => Promise<void>
+}
+
 export interface FindQuestionBySlugRepository {
   find: (slug: string) => Promise<Question | null>
 }

@@ -21,5 +21,7 @@ export class DeleteQuestionUseCase {
     if (question.authorId.toString() !== authorId) {
       throw new Error('Not allowed');
     }
+
+    await this.questionRepository.delete(question);
   }
 }
