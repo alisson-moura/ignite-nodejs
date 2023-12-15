@@ -3,10 +3,15 @@ import { type Answer } from '../../enterprise/entities/answer';
 export interface AnswersRepository extends
   CreateAnswerRepository,
   FindAnswerByIdRepository,
-  DeleteAnswerRepository { }
+  DeleteAnswerRepository,
+  SaveAnswerRepository { }
 
 export interface CreateAnswerRepository {
   create: (answer: Answer) => Promise<void>
+}
+
+export interface SaveAnswerRepository {
+  save: (answer: Answer) => Promise<void>
 }
 
 export interface FindAnswerByIdRepository {
