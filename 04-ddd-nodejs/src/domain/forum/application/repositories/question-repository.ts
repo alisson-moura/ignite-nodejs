@@ -1,10 +1,12 @@
+import { type PaginationParams } from '@/core/repositories/pagination';
 import { type Question } from '../../enterprise/entities/question';
 
 export interface QuestionRepository extends
   CreateQuestionRepository,
   FindQuestionBySlugRepository,
   FindQuestionByIdRepository,
-  DeleteQuestionRepository { }
+  DeleteQuestionRepository,
+  SaveQuestionRepository { }
 
 export interface CreateQuestionRepository {
   create: (question: Question) => Promise<void>
@@ -23,4 +25,8 @@ export interface FindQuestionByIdRepository {
 }
 export interface DeleteQuestionRepository {
   delete: (question: Question) => Promise<void>
+}
+
+export interface FindManyRecentRepository {
+  find: (params: PaginationParams) => Promise<Question[]>
 }
