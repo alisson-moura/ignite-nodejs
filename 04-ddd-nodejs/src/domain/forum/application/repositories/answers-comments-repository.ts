@@ -1,9 +1,11 @@
+import { type PaginationParams } from '@/core/repositories/pagination';
 import { type AnswerComment } from '../../enterprise/entities/answer-comment';
 
 export interface AnswerCommentRepository extends
   CreateAnswerCommentRepository,
   FindAnswerCommentByIdRepository,
-  DeleteAnswerCommentRepository
+  DeleteAnswerCommentRepository,
+  FindManyByAnswerIdRepository
 { }
 
 export interface CreateAnswerCommentRepository {
@@ -16,4 +18,8 @@ export interface FindAnswerCommentByIdRepository {
 
 export interface DeleteAnswerCommentRepository {
   delete: (comment: AnswerComment) => Promise<void>
+}
+
+export interface FindManyByAnswerIdRepository {
+  findMany: (answerId: string, pagination: PaginationParams) => Promise<AnswerComment[]>
 }
