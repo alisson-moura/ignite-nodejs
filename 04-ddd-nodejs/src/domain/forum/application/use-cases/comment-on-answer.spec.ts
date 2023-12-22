@@ -4,6 +4,7 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
 import { CommentOnAnswerUseCase } from './comment-on-answer';
 import { type CreateAnswerCommentRepository } from '../repositories/answers-comments-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let answerRepository: FindAnswerByIdRepository;
 let commentRepository: CreateAnswerCommentRepository;
@@ -32,29 +33,31 @@ describe('Comment on Answer', () => {
   });
 
   it('should be able to comment on answer', async () => {
+    const fakeAnswer = makeFakeAnswer();
     const spyOnCreateCommentRepository = vi.spyOn(commentRepository, 'create');
     vi.spyOn(answerRepository, 'find')
-      .mockResolvedValueOnce(makeFakeAnswer());
+      .mockResolvedValueOnce(fakeAnswer);
 
-    await sut.execute({
+    const result = await sut.execute({
       answerId: 'fake_question_id',
       authorId: 'fake_author_id',
       content: 'Comentário teste'
     });
 
     expect(spyOnCreateCommentRepository).toHaveBeenCalledOnce();
+    expect(result.isRight()).toBeTruthy();
   });
 
   it('should return an erro when answerId is invalid', async () => {
     vi.spyOn(answerRepository, 'find')
       .mockResolvedValueOnce(null);
 
-    const { value } = await sut.execute({
+    const result = await sut.execute({
       answerId: 'fake_question_id',
       authorId: 'fake_author_id',
       content: 'Comentário teste'
     });
 
-    expect(value).toBe('Invalid answerId');
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });

@@ -41,10 +41,9 @@ describe('Answer Question Use Case', () => {
     });
 
     expect(result.isRight()).toBe(true);
-    if (result.isRight()) {
-      expect(result.value.answer.id).toBeInstanceOf(UniqueEntityId);
-      expect(result.value.answer.content).toEqual('Nova respostas');
-    }
+
+    expect(result.value?.answer.id).toBeInstanceOf(UniqueEntityId);
+    expect(result.value.answer.content).toEqual('Nova respostas');
   });
 
   it('should return an error if questionId is invalid', async () => {

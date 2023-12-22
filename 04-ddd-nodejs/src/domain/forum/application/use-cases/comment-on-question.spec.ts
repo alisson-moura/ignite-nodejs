@@ -4,6 +4,7 @@ import { type CreateQuestionCommentRepository } from '../repositories/question-c
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let questionRepository: FindQuestionByIdRepository;
 let commentRepository: CreateQuestionCommentRepository;
@@ -36,12 +37,26 @@ describe('Comment on Question', () => {
     vi.spyOn(questionRepository, 'find')
       .mockResolvedValueOnce(makeFakeQuestion());
 
-    await sut.execute({
+    const response = await sut.execute({
       questionId: 'fake_question_id',
       authorId: 'fake_author_id',
       content: 'Comentário teste'
     });
 
     expect(spyOnCreateCommentRepository).toHaveBeenCalledOnce();
+    expect(response.isRight()).toBeTruthy();
+  });
+
+  it('should not be possible to comment on a non-existent question ', async () => {
+    vi.spyOn(questionRepository, 'find')
+      .mockResolvedValueOnce(null);
+
+    const response = await sut.execute({
+      questionId: 'fake_question_id',
+      authorId: 'fake_author_id',
+      content: 'Comentário teste'
+    });
+
+    expect(response.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });

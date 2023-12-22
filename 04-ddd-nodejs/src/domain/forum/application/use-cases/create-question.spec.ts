@@ -15,12 +15,15 @@ describe('Create Question Use Case', () => {
   });
 
   it('should be able to create a question', async () => {
-    const { question } = await sut.execute({
+    const response = await sut.execute({
       authorId: '1',
       title: 'Fake title',
       content: 'fake description.'
     });
 
-    expect(question.id).toBeInstanceOf(UniqueEntityId);
+    expect(response.isRight()).toBeTruthy();
+    if (response.isRight()) {
+      expect(response.value.question.id).toBeInstanceOf(UniqueEntityId);
+    }
   });
 });

@@ -5,6 +5,8 @@ import { type SaveQuestionRepository, type FindQuestionByIdRepository } from '..
 import { type FindAnswerByIdRepository } from '../repositories/answers-repository';
 import { ChoseQuestionBestAnswer } from './chose-question-best-answer';
 import { Answer } from '../../enterprise/entities/answer';
+import { NotAllowedError } from './errors/not-allowed';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let questionRepository: FindQuestionByIdRepository & SaveQuestionRepository;
 let answersRepository: FindAnswerByIdRepository;
@@ -47,20 +49,49 @@ describe('Chose Question Best Answer Use Case', () => {
       authorId: 'fake_question_author_id'
     });
 
-    expect(response.question.bestAnswerId?.toString()).toEqual('fake_answer_id');
+    if (response.isRight()) {
+      expect(response.value?.question.bestAnswerId?.toString()).toEqual('fake_answer_id');
+    }
   });
 
-  it('should throw a error when authorId is invalid', async () => {
+  it('should not be able to to choose another user question best answer', async () => {
     vi.spyOn(answersRepository, 'find')
       .mockResolvedValueOnce(makeFakeAnswer('fake_answer_id', 'fake_question_id'));
     vi.spyOn(questionRepository, 'find')
       .mockResolvedValueOnce(makeFakeQuestion('fake_question_id'));
 
-    await expect(sut.execute({
+    const result = await sut.execute({
       answerId: 'fake_answer_id',
       authorId: 'wrong_author_id'
-    }))
-      .rejects
-      .toThrowError('Not allowed');
+    });
+
+    expect(result.value).toBeInstanceOf(NotAllowedError);
+  });
+
+  it('should not be possible to choose a question that does not exist', async () => {
+    vi.spyOn(answersRepository, 'find')
+      .mockResolvedValueOnce(makeFakeAnswer('fake_answer_id', 'fake_question_id'));
+    vi.spyOn(questionRepository, 'find')
+      .mockResolvedValueOnce(null);
+
+    const result = await sut.execute({
+      answerId: 'fake_answer_id',
+      authorId: 'wrong_author_id'
+    });
+
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+  });
+  it('should not be possible to choose a answer that does not exist', async () => {
+    vi.spyOn(answersRepository, 'find')
+      .mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'find')
+      .mockResolvedValueOnce(null);
+
+    const result = await sut.execute({
+      answerId: 'fake_answer_id',
+      authorId: 'wrong_author_id'
+    });
+
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });
