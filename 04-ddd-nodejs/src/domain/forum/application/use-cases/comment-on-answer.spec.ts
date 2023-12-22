@@ -44,4 +44,17 @@ describe('Comment on Answer', () => {
 
     expect(spyOnCreateCommentRepository).toHaveBeenCalledOnce();
   });
+
+  it('should return an erro when answerId is invalid', async () => {
+    vi.spyOn(answerRepository, 'find')
+      .mockResolvedValueOnce(null);
+
+    const { value } = await sut.execute({
+      answerId: 'fake_question_id',
+      authorId: 'fake_author_id',
+      content: 'Comentário teste'
+    });
+
+    expect(value).toBe('Invalid answerId');
+  });
 });

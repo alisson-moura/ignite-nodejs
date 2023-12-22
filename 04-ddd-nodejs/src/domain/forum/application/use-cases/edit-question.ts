@@ -1,4 +1,7 @@
+import { type Either, left, right } from '@/core/either';
 import { type SaveQuestionRepository, type FindQuestionByIdRepository } from '../repositories/question-repository';
+import { NotAllowedError } from './errors/not-allowed';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface Request {
   questionId: string
@@ -7,25 +10,28 @@ interface Request {
   content: string
 }
 
+type Response = Either<ResourceNotFoundError | NotAllowedError, void>;
+
 export class EditQuestionUseCase {
   constructor (
     private readonly questionRepository: FindQuestionByIdRepository
     & SaveQuestionRepository
   ) { }
 
-  public async execute ({ authorId, questionId, title, content }: Request): Promise<void> {
+  public async execute ({ authorId, questionId, title, content }: Request): Promise<Response> {
     const question = await this.questionRepository.find(questionId);
 
     if (question == null) {
-      throw new Error('Question not found');
+      return left(new ResourceNotFoundError());
     }
 
     if (question.authorId.toString() !== authorId) {
-      throw new Error('Not allowed');
+      return left(new NotAllowedError());
     }
 
     question.title = title;
     question.content = content;
     await this.questionRepository.save(question);
+    return right(undefined);
   }
 }

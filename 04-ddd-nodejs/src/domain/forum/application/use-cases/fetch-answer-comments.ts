@@ -1,3 +1,4 @@
+import { right, type Either } from '@/core/either';
 import { type AnswerComment } from '../../enterprise/entities/answer-comment';
 import { type FindManyByAnswerIdRepository } from '../repositories/answers-comments-repository';
 
@@ -6,9 +7,7 @@ interface Request {
   answerId: string
 }
 
-interface Response {
-  comments: AnswerComment[]
-}
+type Response = Either<null, { comments: AnswerComment[] }>;
 
 export class FetchAnswerCommentsUseCase {
   constructor (private readonly commentsRepository: FindManyByAnswerIdRepository) {}
@@ -19,8 +18,8 @@ export class FetchAnswerCommentsUseCase {
   }: Request): Promise<Response> {
     const comments = await this.commentsRepository.findMany(answerId, { page });
 
-    return {
+    return right({
       comments
-    };
+    });
   }
 }
