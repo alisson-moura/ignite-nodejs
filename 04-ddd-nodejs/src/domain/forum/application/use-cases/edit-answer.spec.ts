@@ -3,6 +3,8 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
 import { type FindAnswerByIdRepository, type SaveAnswerRepository } from '../repositories/answers-repository';
 import { EditAnswerUseCase } from './edit-answer';
+import { ResourceNotFoundError } from './errors/resource-not-found';
+import { NotAllowedError } from './errors/not-allowed';
 
 let answerRepository: SaveAnswerRepository & FindAnswerByIdRepository;
 let sut: EditAnswerUseCase;
@@ -30,30 +32,31 @@ describe('Edit Answer Use Case', () => {
       answerId: 'fake_id',
       content: 'fake_content'
     });
-
-    expect(response.answer.updatedAt).toBeTruthy();
-    expect(response.answer.content).toEqual('fake_content');
+    expect(response.isRight()).toBeTruthy();
+    if (response.isRight()) {
+      expect(response.value.answer.updatedAt).toBeTruthy();
+      expect(response.value.answer.content).toEqual('fake_content');
+    }
   });
 
   it('should throw a error when answerId is invalid', async () => {
-    await expect(sut.execute({
+    const result = await sut.execute({
       authorId: 'fake_author_id',
       answerId: 'wrong_id',
       content: 'fake_content'
-    }))
-      .rejects
-      .toThrowError('Answer not found');
+    });
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 
   it('should throw a error when authorId is invalid', async () => {
     vi.spyOn(answerRepository, 'find')
       .mockResolvedValueOnce(makeFakeAnswer('fake_id'));
-    await expect(sut.execute({
+    const result = await sut.execute({
       answerId: 'fake_id',
       authorId: 'wrong_id',
       content: 'fake_content'
-    }))
-      .rejects
-      .toThrowError('Not allowed');
+    });
+
+    expect(result.value).toBeInstanceOf(NotAllowedError);
   });
 });

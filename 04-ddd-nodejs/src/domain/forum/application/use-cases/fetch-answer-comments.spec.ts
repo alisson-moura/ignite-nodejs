@@ -28,10 +28,13 @@ describe('Fetch  Answer Comments Use Case', () => {
     vi.spyOn(answerCommentsRepository, 'findMany')
       .mockResolvedValueOnce([makeFakeComment(), makeFakeComment()]);
 
-    const { comments } = await sut.execute({
+    const result = await sut.execute({
       answerId: 'fake_answer_id', page: 1
     });
 
-    expect(comments.length).toEqual(2);
+    expect(result.isRight()).toBeTruthy();
+    if (result.isRight()) {
+      expect(result.value.comments.length).toEqual(2);
+    }
   });
 });

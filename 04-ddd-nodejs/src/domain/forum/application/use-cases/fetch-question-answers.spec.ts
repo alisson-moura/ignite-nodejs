@@ -29,10 +29,13 @@ describe('Fetch Questions Answers Use Case', () => {
         makeFakeAnswer('fake_question_id'), makeFakeAnswer('fake_question_id')
       ]);
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 1, questionId: 'fake_question_id'
     });
 
-    expect(answers.length).toEqual(2);
+    expect(result.isRight());
+    if (result.isRight()) {
+      expect(result.value.answers.length).toEqual(2);
+    }
   });
 });

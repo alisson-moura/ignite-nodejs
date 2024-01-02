@@ -28,8 +28,8 @@ describe('Fetch Recent Questions Use Case', () => {
     vi.spyOn(questionsRepository, 'find')
       .mockResolvedValueOnce([makeFakeQuestion(), makeFakeQuestion()]);
 
-    const { questions } = await sut.execute({ page: 1 });
+    const result = await sut.execute({ page: 1 });
 
-    expect(questions.length).toEqual(2);
+    expect(result.value?.questions.length).toEqual(2);
   });
 });

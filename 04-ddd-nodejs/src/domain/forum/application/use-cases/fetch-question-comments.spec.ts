@@ -28,10 +28,13 @@ describe('Fetch  Question Comments Use Case', () => {
     vi.spyOn(questionCommentsRepository, 'findMany')
       .mockResolvedValueOnce([makeFakeComment(), makeFakeComment()]);
 
-    const { comments } = await sut.execute({
+    const result = await sut.execute({
       questionId: 'fake_question_id', page: 1
     });
 
-    expect(comments.length).toEqual(2);
+    expect(result.isRight());
+    if (result.isRight()) {
+      expect(result.value.comments.length).toEqual(2);
+    }
   });
 });

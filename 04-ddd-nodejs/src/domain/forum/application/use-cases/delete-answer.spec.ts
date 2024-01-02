@@ -3,6 +3,8 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
 import { type DeleteAnswerRepository, type FindAnswerByIdRepository } from '../repositories/answers-repository';
 import { DeleteAnswerUseCase } from './delete-answer';
+import { ResourceNotFoundError } from './errors/resource-not-found';
+import { NotAllowedError } from './errors/not-allowed';
 
 let answerRepository: DeleteAnswerRepository & FindAnswerByIdRepository;
 let sut: DeleteAnswerUseCase;
@@ -25,25 +27,23 @@ describe('Delete Answer Use Case', () => {
   it('should be able to delete a answer', async () => {
     vi.spyOn(answerRepository, 'find')
       .mockResolvedValueOnce(makeFakeAnswer('fake_id'));
-
-    await expect(sut.execute({
+    const result = await sut.execute({
       authorId: 'fake_author_id',
       answerId: 'fake_id'
-    }))
-      .resolves.toBeUndefined();
+    });
+
+    expect(result.value).toBeUndefined();
   });
 
   it('should throw a error when answerId is invalid', async () => {
-    await expect(sut.execute({ answerId: 'wrong_id', authorId: 'wrong_id' }))
-      .rejects
-      .toThrowError('Answer not found');
+    const result = await sut.execute({ answerId: 'wrong_id', authorId: 'wrong_id' });
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 
   it('should throw a error when authorId is invalid', async () => {
     vi.spyOn(answerRepository, 'find')
       .mockResolvedValueOnce(makeFakeAnswer('fake_id'));
-    await expect(sut.execute({ answerId: 'fake_id', authorId: 'wrong_id' }))
-      .rejects
-      .toThrowError('Not allowed');
+    const result = await sut.execute({ answerId: 'fake_id', authorId: 'wrong_id' });
+    expect(result.value).toBeInstanceOf(NotAllowedError);
   });
 });
