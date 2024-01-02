@@ -1,8 +1,8 @@
-import { Entity } from '@/core/entities/entity';
 import { type UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { type Optional } from '@/core/types/optional';
 import { Slug } from './value-objects/slug';
 import dayjs from 'dayjs';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
 
 interface QuestionProps {
   authorId: UniqueEntityId
@@ -14,7 +14,7 @@ interface QuestionProps {
   updatedAt?: Date
 }
 
-export class Question extends Entity<QuestionProps> {
+export class Question extends AggregateRoot<QuestionProps> {
   static create (props: Optional<QuestionProps, 'createdAt' | 'slug'>, id?: UniqueEntityId): Question {
     return new Question({
       createdAt: new Date(),
