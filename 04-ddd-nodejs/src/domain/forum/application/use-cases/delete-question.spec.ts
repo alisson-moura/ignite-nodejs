@@ -5,8 +5,10 @@ import { type DeleteQuestionRepository, type FindQuestionByIdRepository } from '
 import { DeleteQuestionUseCase } from './delete-question';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
+import { type DeleteAttachmentByQuestionIdRepository } from '../repositories/question-attachment-repository';
 
 let questionRepository: FindQuestionByIdRepository & DeleteQuestionRepository;
+let attachmentRepository: DeleteAttachmentByQuestionIdRepository;
 let sut: DeleteQuestionUseCase;
 
 const makeFakeQuestion = (id: string): Question => Question.create({
@@ -21,7 +23,12 @@ describe('Delete Question Use Case', () => {
       async find (slug: string) { return null; },
       async delete (question) { }
     };
-    sut = new DeleteQuestionUseCase(questionRepository);
+    attachmentRepository = {
+      async delete (questionId) {
+
+      }
+    };
+    sut = new DeleteQuestionUseCase(questionRepository, attachmentRepository);
   });
 
   it('should be able to delete a question', async () => {

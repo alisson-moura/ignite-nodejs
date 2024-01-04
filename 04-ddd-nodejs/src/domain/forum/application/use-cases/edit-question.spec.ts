@@ -5,8 +5,10 @@ import { type SaveQuestionRepository, type FindQuestionByIdRepository } from '..
 import { EditQuestionUseCase } from './edit-question';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
+import { type FindAttachmentByQuestionIdRepository } from '../repositories/question-attachment-repository';
 
 let questionRepository: FindQuestionByIdRepository & SaveQuestionRepository;
+let attachmentRepository: FindAttachmentByQuestionIdRepository;
 let sut: EditQuestionUseCase;
 
 const makeFakeQuestion = (id: string): Question => Question.create({
@@ -21,7 +23,13 @@ describe('Edit Question Use Case', () => {
       async find (id: string) { return null; },
       async save (question) { }
     };
-    sut = new EditQuestionUseCase(questionRepository);
+
+    attachmentRepository = {
+      async findByQuestion (questionId) {
+        return [];
+      }
+    };
+    sut = new EditQuestionUseCase(questionRepository, attachmentRepository);
   });
 
   it('should be able to edit a question', async () => {
@@ -31,7 +39,8 @@ describe('Edit Question Use Case', () => {
       authorId: 'fake_author_id',
       questionId: 'fake_id',
       content: 'fake_content',
-      title: 'fake_title'
+      title: 'fake_title',
+      attachmentsIds: []
     });
     expect(result.isRight()).toBeTruthy();
   });
@@ -41,7 +50,8 @@ describe('Edit Question Use Case', () => {
       questionId: 'wrong_id',
       authorId: 'wrong_id',
       content: 'fake_content',
-      title: 'fake_title'
+      title: 'fake_title',
+      attachmentsIds: []
     });
 
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
@@ -54,7 +64,8 @@ describe('Edit Question Use Case', () => {
       questionId: 'fake_id',
       authorId: 'wrong_id',
       content: 'fake_content',
-      title: 'fake_title'
+      title: 'fake_title',
+      attachmentsIds: []
     });
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });

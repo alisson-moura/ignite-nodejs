@@ -38,7 +38,7 @@ describe('Create Question Use Case', () => {
 
     expect(response.isRight()).toBeTruthy();
     if (response.isRight()) {
-      expect(response.value.question.attachments).toHaveLength(2);
+      expect(response.value.question.attachments.getItems()).toHaveLength(2);
     }
   });
 });
