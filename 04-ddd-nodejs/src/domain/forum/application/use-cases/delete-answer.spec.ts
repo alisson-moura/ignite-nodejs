@@ -5,8 +5,10 @@ import { type DeleteAnswerRepository, type FindAnswerByIdRepository } from '../r
 import { DeleteAnswerUseCase } from './delete-answer';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
+import { DeleteAttachmentByAnswerIdRepository } from '../repositories/answer-attachment-repository';
 
 let answerRepository: DeleteAnswerRepository & FindAnswerByIdRepository;
+let attachmentRepository: DeleteAttachmentByAnswerIdRepository
 let sut: DeleteAnswerUseCase;
 
 const makeFakeAnswer = (id: string): Answer => Answer.create({
@@ -21,7 +23,10 @@ describe('Delete Answer Use Case', () => {
       async find (id: string) { return null; },
       async delete (answer) { }
     };
-    sut = new DeleteAnswerUseCase(answerRepository);
+    attachmentRepository = {
+      async delete(AnswerId) {},
+    }
+    sut = new DeleteAnswerUseCase(answerRepository, attachmentRepository);
   });
 
   it('should be able to delete a answer', async () => {

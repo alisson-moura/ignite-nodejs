@@ -37,13 +37,15 @@ describe('Answer Question Use Case', () => {
     const result = await sut.execute({
       questionId: 'fake_question_id',
       instructorId: '1',
-      content: 'Nova respostas'
+      content: 'Nova respostas',
+      attachmentsIds: []
     });
 
     expect(result.isRight()).toBe(true);
-
-    expect(result.value?.answer.id).toBeInstanceOf(UniqueEntityId);
+    if (result.isRight()) {
+    expect(result.value.answer.id).toBeInstanceOf(UniqueEntityId);
     expect(result.value.answer.content).toEqual('Nova respostas');
+    }
   });
 
   it('should return an error if questionId is invalid', async () => {
@@ -53,10 +55,28 @@ describe('Answer Question Use Case', () => {
     const result = await sut.execute({
       questionId: 'fake_question_id',
       instructorId: '1',
-      content: 'Nova respostas'
+      content: 'Nova respostas',
+      attachmentsIds: []
     });
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it('should be able to answer a question with attachments', async () => {
+    vi.spyOn(questionRepository, 'find')
+    .mockResolvedValueOnce(makeFakeQuestion('fake_question_id'));
+    
+    const response = await sut.execute({
+      questionId: 'fake_question_id',
+      instructorId: '1',
+      content: 'Nova respostas',
+      attachmentsIds: ['1', '2']
+    });
+
+    expect(response.isRight()).toBeTruthy();
+    if (response.isRight()) {
+      expect(response.value.answer.attachments.getItems()).toHaveLength(2);
+    }
   });
 });
