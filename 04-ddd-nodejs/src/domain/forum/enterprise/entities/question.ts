@@ -4,6 +4,7 @@ import { Slug } from './value-objects/slug';
 import dayjs from 'dayjs';
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { QuestionAttachmentList } from './question-attachment-list';
+import { BestAnswerChosenEvent } from '../events/best-answer-chose-event';
 
 interface QuestionProps {
   authorId: UniqueEntityId
@@ -17,7 +18,7 @@ interface QuestionProps {
 }
 
 export class Question extends AggregateRoot<QuestionProps> {
-  static create (props: Optional<QuestionProps, 'createdAt' | 'slug' | 'attachments'>, id?: UniqueEntityId): Question {
+  static create(props: Optional<QuestionProps, 'createdAt' | 'slug' | 'attachments'>, id?: UniqueEntityId): Question {
     return new Question({
       createdAt: new Date(),
       slug: Slug.createFromText(props.title),
@@ -26,70 +27,77 @@ export class Question extends AggregateRoot<QuestionProps> {
     }, id);
   }
 
-  get authorId (): UniqueEntityId {
+  get authorId(): UniqueEntityId {
     return this.props.authorId;
   }
 
-  get slug (): Slug {
+  get slug(): Slug {
     return this.props.slug;
   }
 
-  get attachments (): QuestionAttachmentList {
+  get attachments(): QuestionAttachmentList {
     return this.props.attachments;
   }
 
-  set attachments (items: QuestionAttachmentList) {
+  set attachments(items: QuestionAttachmentList) {
     this.props.attachments = items;
   }
 
-  get createdAt (): Date {
+  get createdAt(): Date {
     return this.props.createdAt;
   }
 
-  get updatedAt (): Date | undefined {
+  get updatedAt(): Date | undefined {
     return this.props.updatedAt;
   }
 
-  get isNew (): boolean {
+  get isNew(): boolean {
     return dayjs().diff(this.createdAt, 'days') <= 3;
   }
 
-  get excerpt (): string {
+  get excerpt(): string {
     return this.content
       .substring(0, 120)
       .trimEnd()
       .concat('...');
   }
 
-  private touch (): void {
+  private touch(): void {
     this.props.updatedAt = new Date();
   }
 
-  get title (): string {
+  get title(): string {
     return this.props.title;
   }
 
-  set title (title: string) {
+  set title(title: string) {
     this.props.title = title;
     this.props.slug = Slug.createFromText(title);
 
     this.touch();
   }
 
-  get content (): string {
+  get content(): string {
     return this.props.content;
   }
 
-  set content (content: string) {
+  set content(content: string) {
     this.props.content = content;
     this.touch();
   }
 
-  get bestAnswerId (): UniqueEntityId | undefined {
+  get bestAnswerId(): UniqueEntityId | undefined {
     return this.props.bestAnswerId;
   }
 
-  set bestAnswerId (bestAnswerId: UniqueEntityId | undefined) {
+  set bestAnswerId(bestAnswerId: UniqueEntityId | undefined) {
+    if (bestAnswerId === undefined) {
+      return
+    }
+    if (this.props.bestAnswerId !== undefined && !this.props.bestAnswerId.equals(bestAnswerId)) {
+      this.addDomainEvent(new BestAnswerChosenEvent(this, bestAnswerId))
+    }
+
     this.props.bestAnswerId = bestAnswerId;
     this.touch();
   }
