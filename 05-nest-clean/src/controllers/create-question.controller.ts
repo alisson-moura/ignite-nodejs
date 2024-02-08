@@ -6,36 +6,38 @@ import { ZodValidationPipe } from '../pipes/zod-validation-pipe';
 import { PrismaService } from '../prisma/prisma.service';
 import { z } from 'zod';
 
-const createQuestionBodySchema = z.object({
-  title: z.string(),
-  content: z.string()
-}).required();
+const createQuestionBodySchema = z
+  .object({
+    title: z.string(),
+    content: z.string(),
+  })
+  .required();
 
-type CreateQuestionBodySchema = z.infer<typeof createQuestionBodySchema>
+type CreateQuestionBodySchema = z.infer<typeof createQuestionBodySchema>;
 
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
 export class CreateQuestionController {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   @Post()
   @UsePipes(new ZodValidationPipe(createQuestionBodySchema))
   async handle(
     @Body() body: CreateQuestionBodySchema,
-    @CurrentUser() user: UserPayload
+    @CurrentUser() user: UserPayload,
   ) {
-    const { title, content } = body
-    const authorId = user.sub
-    const slug = this.convertToSlug(title)
+    const { title, content } = body;
+    const authorId = user.sub;
+    const slug = this.convertToSlug(title);
 
     await this.prisma.question.create({
       data: {
         content,
         title,
         slug,
-        authorId
-      }
-    })
+        authorId,
+      },
+    });
   }
 
   private convertToSlug(title: string): string {
@@ -44,6 +46,6 @@ export class CreateQuestionController {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
+      .replace(/\s+/g, '-');
   }
 }

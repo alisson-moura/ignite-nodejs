@@ -6,21 +6,23 @@ import { type FindAnswerByIdRepository } from '../repositories/answers-repositor
 import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface Request {
-  answerId: string
-  authorId: string
-  content: string
+  answerId: string;
+  authorId: string;
+  content: string;
 }
 
 type Response = Either<ResourceNotFoundError, { comment: AnswerComment }>;
 
 export class CommentOnAnswerUseCase {
-  constructor (
+  constructor(
     private readonly answerRepository: FindAnswerByIdRepository,
-    private readonly commentRepository: CreateAnswerCommentRepository
-  ) { }
+    private readonly commentRepository: CreateAnswerCommentRepository,
+  ) {}
 
-  public async execute ({
-    authorId, content, answerId
+  public async execute({
+    authorId,
+    content,
+    answerId,
   }: Request): Promise<Response> {
     const answer = await this.answerRepository.find(answerId);
     if (answer == null) {
@@ -30,7 +32,7 @@ export class CommentOnAnswerUseCase {
     const answerComment = AnswerComment.create({
       authorId: new UniqueEntityId(authorId),
       answerId: new UniqueEntityId(answerId),
-      content
+      content,
     });
 
     await this.commentRepository.create(answerComment);

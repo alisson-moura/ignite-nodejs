@@ -6,31 +6,37 @@ import { QuestionAttachment } from '../../enterprise/entities/question-attachmen
 import { QuestionAttachmentList } from '../../enterprise/entities/question-attachment-list';
 
 interface Request {
-  authorId: string
-  content: string
-  title: string
-  attachmentsIds: string[]
+  authorId: string;
+  content: string;
+  title: string;
+  attachmentsIds: string[];
 }
-type Response = Either<null, {
-  question: Question
-}>;
+type Response = Either<
+  null,
+  {
+    question: Question;
+  }
+>;
 
 export class CreateQuestionUseCase {
-  constructor (
-    private readonly questionRepository: CreateQuestionRepository
-  ) { }
+  constructor(private readonly questionRepository: CreateQuestionRepository) {}
 
-  public async execute ({ authorId, content, title, attachmentsIds }: Request): Promise<Response> {
+  public async execute({
+    authorId,
+    content,
+    title,
+    attachmentsIds,
+  }: Request): Promise<Response> {
     const question = Question.create({
       authorId: new UniqueEntityId(authorId),
       title,
-      content
+      content,
     });
 
     const questionAttachments = attachmentsIds.map((attachmentId) => {
       return QuestionAttachment.create({
         attachmentId: new UniqueEntityId(attachmentId),
-        questionId: question.id
+        questionId: question.id,
       });
     });
 

@@ -1,5 +1,4 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
-import { Notification } from '../../enterprise/entities/notification';
 import { CreateNotificationRepository } from '../repositories/notification-repository';
 import { SendNotificationUseCase } from './send-notification';
 
@@ -9,7 +8,7 @@ let sut: SendNotificationUseCase;
 describe('Send Notification Use Case', () => {
   beforeEach(() => {
     notificationRepository = {
-      async create(notification: Notification) { }
+      async create() {},
     };
     sut = new SendNotificationUseCase(notificationRepository);
   });

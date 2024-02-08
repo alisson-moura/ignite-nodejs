@@ -14,12 +14,10 @@ export class Entity<Props> {
   }
 
   equals(entity: Entity<any>): boolean {
-    if (entity == this)
-      return true
+    if (entity == this) return true;
 
-    if (entity.id === this._id)
-      return true
-    
-    return false
+    if (entity.id === this._id) return true;
+
+    return false;
   }
 }

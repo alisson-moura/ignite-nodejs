@@ -7,24 +7,30 @@ import { QuestionAttachmentList } from './question-attachment-list';
 import { BestAnswerChosenEvent } from '../events/best-answer-chose-event';
 
 interface QuestionProps {
-  authorId: UniqueEntityId
-  bestAnswerId?: UniqueEntityId
-  title: string
-  content: string
-  slug: Slug
-  attachments: QuestionAttachmentList
-  createdAt: Date
-  updatedAt?: Date
+  authorId: UniqueEntityId;
+  bestAnswerId?: UniqueEntityId;
+  title: string;
+  content: string;
+  slug: Slug;
+  attachments: QuestionAttachmentList;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
 export class Question extends AggregateRoot<QuestionProps> {
-  static create(props: Optional<QuestionProps, 'createdAt' | 'slug' | 'attachments'>, id?: UniqueEntityId): Question {
-    return new Question({
-      createdAt: new Date(),
-      slug: Slug.createFromText(props.title),
-      attachments: props.attachments ?? new QuestionAttachmentList(),
-      ...props
-    }, id);
+  static create(
+    props: Optional<QuestionProps, 'createdAt' | 'slug' | 'attachments'>,
+    id?: UniqueEntityId,
+  ): Question {
+    return new Question(
+      {
+        createdAt: new Date(),
+        slug: Slug.createFromText(props.title),
+        attachments: props.attachments ?? new QuestionAttachmentList(),
+        ...props,
+      },
+      id,
+    );
   }
 
   get authorId(): UniqueEntityId {
@@ -56,10 +62,7 @@ export class Question extends AggregateRoot<QuestionProps> {
   }
 
   get excerpt(): string {
-    return this.content
-      .substring(0, 120)
-      .trimEnd()
-      .concat('...');
+    return this.content.substring(0, 120).trimEnd().concat('...');
   }
 
   private touch(): void {
@@ -92,10 +95,13 @@ export class Question extends AggregateRoot<QuestionProps> {
 
   set bestAnswerId(bestAnswerId: UniqueEntityId | undefined) {
     if (bestAnswerId === undefined) {
-      return
+      return;
     }
-    if (this.props.bestAnswerId == undefined || !this.props.bestAnswerId.equals(bestAnswerId)) {
-      this.addDomainEvent(new BestAnswerChosenEvent(this, bestAnswerId))
+    if (
+      this.props.bestAnswerId == undefined ||
+      !this.props.bestAnswerId.equals(bestAnswerId)
+    ) {
+      this.addDomainEvent(new BestAnswerChosenEvent(this, bestAnswerId));
     }
 
     this.props.bestAnswerId = bestAnswerId;

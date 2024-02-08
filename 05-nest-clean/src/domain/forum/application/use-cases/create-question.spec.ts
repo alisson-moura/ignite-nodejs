@@ -1,5 +1,4 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
-import { type Question } from '../../enterprise/entities/question';
 import { type CreateQuestionRepository } from '../repositories/question-repository';
 import { CreateQuestionUseCase } from './create-question';
 
@@ -9,7 +8,7 @@ let sut: CreateQuestionUseCase;
 describe('Create Question Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async create (question: Question) {}
+      async create() {},
     };
     sut = new CreateQuestionUseCase(questionRepository);
   });
@@ -19,7 +18,7 @@ describe('Create Question Use Case', () => {
       authorId: '1',
       title: 'Fake title',
       content: 'fake description.',
-      attachmentsIds: []
+      attachmentsIds: [],
     });
 
     expect(response.isRight()).toBeTruthy();
@@ -33,7 +32,7 @@ describe('Create Question Use Case', () => {
       authorId: '1',
       title: 'Fake title',
       content: 'fake description.',
-      attachmentsIds: ['1', '2']
+      attachmentsIds: ['1', '2'],
     });
 
     expect(response.isRight()).toBeTruthy();

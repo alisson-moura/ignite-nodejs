@@ -4,17 +4,17 @@ import { type FindQuestionBySlugRepository } from '../repositories/question-repo
 import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface Request {
-  slug: string
+  slug: string;
 }
 
 type Response = Either<ResourceNotFoundError, { question: Question }>;
 
 export class GetQuestionBySlugUseCase {
-  constructor (
-    private readonly questionRepository: FindQuestionBySlugRepository
-  ) { }
+  constructor(
+    private readonly questionRepository: FindQuestionBySlugRepository,
+  ) {}
 
-  public async execute ({ slug }: Request): Promise<Response> {
+  public async execute({ slug }: Request): Promise<Response> {
     const question = await this.questionRepository.find(slug);
 
     if (question == null) {

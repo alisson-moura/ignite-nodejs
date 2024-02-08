@@ -20,7 +20,7 @@ import { FetchRecentQuestionsController } from './controllers/fetch-recent-quest
     CreateAccountController,
     AuthenticateController,
     CreateQuestionController,
-    FetchRecentQuestionsController
+    FetchRecentQuestionsController,
   ],
   providers: [PrismaService],
 })

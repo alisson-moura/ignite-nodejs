@@ -5,30 +5,34 @@ import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { AnswerCreatedEvent } from '../events/answer-created-event';
 
 interface AnswerProps {
-  authorId: UniqueEntityId
-  questionId: UniqueEntityId
-  attachments: AnswerAttachmentList
-  content: string
-  createdAt: Date
-  updatedAt?: Date
+  authorId: UniqueEntityId;
+  questionId: UniqueEntityId;
+  attachments: AnswerAttachmentList;
+  content: string;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
 export class Answer extends AggregateRoot<AnswerProps> {
   static create(
     props: Optional<AnswerProps, 'createdAt' | 'attachments'>,
-    id?: UniqueEntityId): Answer {
-    const answer = new Answer({
-      createdAt: new Date(),
-      attachments: props.attachments ?? new AnswerAttachmentList(),
-      ...props
-    }, id);
+    id?: UniqueEntityId,
+  ): Answer {
+    const answer = new Answer(
+      {
+        createdAt: new Date(),
+        attachments: props.attachments ?? new AnswerAttachmentList(),
+        ...props,
+      },
+      id,
+    );
 
-    const isNewAnswer = !id
+    const isNewAnswer = !id;
     if (isNewAnswer) {
-      answer.addDomainEvent(new AnswerCreatedEvent(answer))
+      answer.addDomainEvent(new AnswerCreatedEvent(answer));
     }
-    
-    return answer
+
+    return answer;
   }
 
   get authorId(): UniqueEntityId {
@@ -48,10 +52,7 @@ export class Answer extends AggregateRoot<AnswerProps> {
   }
 
   get excerpt(): string {
-    return this.content
-      .substring(0, 120)
-      .trimEnd()
-      .concat('...');
+    return this.content.substring(0, 120).trimEnd().concat('...');
   }
 
   private touch(): void {
@@ -68,11 +69,11 @@ export class Answer extends AggregateRoot<AnswerProps> {
   }
 
   get attachments() {
-    return this.props.attachments
+    return this.props.attachments;
   }
 
   set attachments(attachments: AnswerAttachmentList) {
-    this.props.attachments = attachments
-    this.touch()
+    this.props.attachments = attachments;
+    this.touch();
   }
 }

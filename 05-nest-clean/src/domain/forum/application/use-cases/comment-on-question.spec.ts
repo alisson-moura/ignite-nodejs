@@ -10,37 +10,39 @@ let questionRepository: FindQuestionByIdRepository;
 let commentRepository: CreateQuestionCommentRepository;
 let sut: CommentOnQuestionUseCase;
 
-const makeFakeQuestion = (): Question => Question.create({
-  authorId: new UniqueEntityId('fake_author_id'),
-  content: faker.lorem.text(),
-  title: faker.lorem.sentence()
-}, new UniqueEntityId());
+const makeFakeQuestion = (): Question =>
+  Question.create(
+    {
+      authorId: new UniqueEntityId('fake_author_id'),
+      content: faker.lorem.text(),
+      title: faker.lorem.sentence(),
+    },
+    new UniqueEntityId(),
+  );
 
 describe('Comment on Question', () => {
   beforeEach(() => {
     questionRepository = {
-      async find (id) {
+      async find() {
         return null;
-      }
+      },
     };
     commentRepository = {
-      async create (comment) { }
+      async create() {},
     };
-    sut = new CommentOnQuestionUseCase(
-      questionRepository,
-      commentRepository
-    );
+    sut = new CommentOnQuestionUseCase(questionRepository, commentRepository);
   });
 
   it('should be able to comment on question', async () => {
     const spyOnCreateCommentRepository = vi.spyOn(commentRepository, 'create');
-    vi.spyOn(questionRepository, 'find')
-      .mockResolvedValueOnce(makeFakeQuestion());
+    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+      makeFakeQuestion(),
+    );
 
     const response = await sut.execute({
       questionId: 'fake_question_id',
       authorId: 'fake_author_id',
-      content: 'Comentário teste'
+      content: 'Comentário teste',
     });
 
     expect(spyOnCreateCommentRepository).toHaveBeenCalledOnce();
@@ -48,13 +50,12 @@ describe('Comment on Question', () => {
   });
 
   it('should not be possible to comment on a non-existent question ', async () => {
-    vi.spyOn(questionRepository, 'find')
-      .mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(null);
 
     const response = await sut.execute({
       questionId: 'fake_question_id',
       authorId: 'fake_author_id',
-      content: 'Comentário teste'
+      content: 'Comentário teste',
     });
 
     expect(response.value).toBeInstanceOf(ResourceNotFoundError);

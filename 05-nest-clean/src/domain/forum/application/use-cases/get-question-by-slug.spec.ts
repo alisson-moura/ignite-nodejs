@@ -9,26 +9,28 @@ import { ResourceNotFoundError } from './errors/resource-not-found';
 let questionRepository: FindQuestionBySlugRepository;
 let sut: GetQuestionBySlugUseCase;
 
-const makeFakeQuestion = (slug: Slug): Question => Question.create({
-  authorId: new UniqueEntityId(),
-  content: faker.lorem.text(),
-  title: faker.lorem.sentence(),
-  slug
-});
+const makeFakeQuestion = (slug: Slug): Question =>
+  Question.create({
+    authorId: new UniqueEntityId(),
+    content: faker.lorem.text(),
+    title: faker.lorem.sentence(),
+    slug,
+  });
 
 describe('Create Question Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async find (slug: string) {
+      async find() {
         return null;
-      }
+      },
     };
     sut = new GetQuestionBySlugUseCase(questionRepository);
   });
 
   it('should be able to get a question by slug', async () => {
-    vi.spyOn(questionRepository, 'find')
-      .mockResolvedValueOnce(makeFakeQuestion(new Slug('fake_question')));
+    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+      makeFakeQuestion(new Slug('fake_question')),
+    );
 
     const result = await sut.execute({ slug: 'fake_question' });
 

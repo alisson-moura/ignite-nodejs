@@ -3,21 +3,21 @@ import { type FindManyRecentRepository } from '../repositories/question-reposito
 import { type Either, right } from '@/core/either';
 
 interface FetchRecentQuestionsUseCaseRequest {
-  page: number
+  page: number;
 }
 
 type Response = Either<null, { questions: Question[] }>;
 
 export class FetchRecentQuestionsUseCase {
-  constructor (private readonly questionsRepository: FindManyRecentRepository) {}
+  constructor(private readonly questionsRepository: FindManyRecentRepository) {}
 
-  async execute ({
-    page
+  async execute({
+    page,
   }: FetchRecentQuestionsUseCaseRequest): Promise<Response> {
     const questions = await this.questionsRepository.find({ page });
 
     return right({
-      questions
+      questions,
     });
   }
 }

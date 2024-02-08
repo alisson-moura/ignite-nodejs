@@ -1,6 +1,6 @@
 import { type Either, right, left } from './either';
 
-function doSomething (x: boolean = false): Either<string, number> {
+function doSomething(x: boolean = false): Either<string, number> {
   if (x) {
     return right(0);
   }
