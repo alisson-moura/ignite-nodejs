@@ -4,7 +4,7 @@ import { right, type Either } from '@/core/either';
 import { QuestionAttachment } from '../../enterprise/entities/question-attachment';
 import { QuestionAttachmentList } from '../../enterprise/entities/question-attachment-list';
 import { Injectable } from '@nestjs/common';
-import { QuestionRepository } from '../repositories/question-repository';
+import { CreateQuestionRepository} from '../repositories/question-repository';
 
 interface Request {
   authorId: string;
@@ -21,7 +21,7 @@ type Response = Either<
 
 @Injectable()
 export class CreateQuestionUseCase {
-  constructor(private readonly questionRepository: QuestionRepository) {}
+  constructor(private readonly questionRepository: CreateQuestionRepository) {}
 
   public async execute({
     authorId,

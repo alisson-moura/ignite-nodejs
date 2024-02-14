@@ -1,26 +1,12 @@
 import { type PaginationParams } from '../../../../core/repositories/pagination';
 import { type QuestionComment } from '../../enterprise/entities/question-comment';
 
-export interface QuestionCommentRepository
-  extends CreateQuestionCommentRepository,
-    FindQuestionCommentByIdRepository,
-    DeleteQuestionCommentRepository,
-    FindManyByQuestionIdRepository {}
 
-export interface CreateQuestionCommentRepository {
-  create: (comment: QuestionComment) => Promise<void>;
-}
-
-export interface FindQuestionCommentByIdRepository {
-  find: (id: string) => Promise<QuestionComment | null>;
-}
-
-export interface DeleteQuestionCommentRepository {
-  delete: (comment: QuestionComment) => Promise<void>;
-}
-
-export interface FindManyByQuestionIdRepository {
-  findMany: (
+export abstract class QuestionCommentRepository {
+  abstract create: (comment: QuestionComment) => Promise<void>;
+  abstract findById: (id: string) => Promise<QuestionComment | null>;
+  abstract delete: (comment: QuestionComment) => Promise<void>;
+  abstract findManyByQuestionId: (
     questionId: string,
     pagination: PaginationParams,
   ) => Promise<QuestionComment[]>;
