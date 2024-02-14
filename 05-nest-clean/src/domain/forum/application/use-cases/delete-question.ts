@@ -22,7 +22,7 @@ export class DeleteQuestionUseCase {
   ) {}
 
   public async execute({ authorId, questionId }: Request): Promise<Response> {
-    const question = await this.questionRepository.find(questionId);
+    const question = await this.questionRepository.findById(questionId);
 
     if (question == null) {
       return left(new ResourceNotFoundError());

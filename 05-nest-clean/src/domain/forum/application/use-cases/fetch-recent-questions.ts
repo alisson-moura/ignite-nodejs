@@ -14,7 +14,7 @@ export class FetchRecentQuestionsUseCase {
   async execute({
     page,
   }: FetchRecentQuestionsUseCaseRequest): Promise<Response> {
-    const questions = await this.questionsRepository.find({ page });
+    const questions = await this.questionsRepository.findMany({ page });
 
     return right({
       questions,

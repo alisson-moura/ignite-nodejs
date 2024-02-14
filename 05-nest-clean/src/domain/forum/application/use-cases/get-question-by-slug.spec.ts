@@ -20,7 +20,7 @@ const makeFakeQuestion = (slug: Slug): Question =>
 describe('Create Question Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async find() {
+      async findBySlug() {
         return null;
       },
     };
@@ -28,7 +28,7 @@ describe('Create Question Use Case', () => {
   });
 
   it('should be able to get a question by slug', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findBySlug').mockResolvedValueOnce(
       makeFakeQuestion(new Slug('fake_question')),
     );
 

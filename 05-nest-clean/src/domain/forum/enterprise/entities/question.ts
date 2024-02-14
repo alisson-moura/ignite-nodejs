@@ -8,13 +8,13 @@ import { BestAnswerChosenEvent } from '../events/best-answer-chose-event';
 
 interface QuestionProps {
   authorId: UniqueEntityId;
-  bestAnswerId?: UniqueEntityId;
+  bestAnswerId?: UniqueEntityId | null;
   title: string;
   content: string;
   slug: Slug;
   attachments: QuestionAttachmentList;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt?: Date | null;
 }
 
 export class Question extends AggregateRoot<QuestionProps> {
@@ -53,7 +53,7 @@ export class Question extends AggregateRoot<QuestionProps> {
     return this.props.createdAt;
   }
 
-  get updatedAt(): Date | undefined {
+  get updatedAt(): Date | null | undefined {
     return this.props.updatedAt;
   }
 
@@ -89,7 +89,7 @@ export class Question extends AggregateRoot<QuestionProps> {
     this.touch();
   }
 
-  get bestAnswerId(): UniqueEntityId | undefined {
+  get bestAnswerId(): UniqueEntityId | undefined | null {
     return this.props.bestAnswerId;
   }
 

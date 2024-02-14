@@ -27,7 +27,7 @@ const makeFakeQuestion = (id: string): Question =>
 describe('Edit Question Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
       async save() {},
@@ -42,7 +42,7 @@ describe('Edit Question Use Case', () => {
   });
 
   it('should be able to edit a question', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_id'),
     );
     const result = await sut.execute({
@@ -68,7 +68,7 @@ describe('Edit Question Use Case', () => {
   });
 
   it('should throw a error when authorId is invalid', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_id'),
     );
     const result = await sut.execute({

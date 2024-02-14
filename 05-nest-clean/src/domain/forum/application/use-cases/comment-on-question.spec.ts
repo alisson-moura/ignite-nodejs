@@ -23,7 +23,7 @@ const makeFakeQuestion = (): Question =>
 describe('Comment on Question', () => {
   beforeEach(() => {
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
     };
@@ -35,7 +35,7 @@ describe('Comment on Question', () => {
 
   it('should be able to comment on question', async () => {
     const spyOnCreateCommentRepository = vi.spyOn(commentRepository, 'create');
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion(),
     );
 
@@ -50,7 +50,7 @@ describe('Comment on Question', () => {
   });
 
   it('should not be possible to comment on a non-existent question ', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
 
     const response = await sut.execute({
       questionId: 'fake_question_id',

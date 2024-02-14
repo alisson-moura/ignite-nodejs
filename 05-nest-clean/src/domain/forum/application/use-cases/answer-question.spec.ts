@@ -26,7 +26,7 @@ describe('Answer Question Use Case', () => {
       async create() {},
     };
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
     };
@@ -34,7 +34,7 @@ describe('Answer Question Use Case', () => {
   });
 
   it('should be able to answer an question', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_question_id'),
     );
 
@@ -53,7 +53,7 @@ describe('Answer Question Use Case', () => {
   });
 
   it('should return an error if questionId is invalid', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
 
     const result = await sut.execute({
       questionId: 'fake_question_id',
@@ -67,7 +67,7 @@ describe('Answer Question Use Case', () => {
   });
 
   it('should be able to answer a question with attachments', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_question_id'),
     );
 

@@ -17,7 +17,7 @@ const makeFakeQuestion = (): Question =>
 describe('Fetch Recent Questions Use Case', () => {
   beforeEach(() => {
     questionsRepository = {
-      async find() {
+      async findMany() {
         return [];
       },
     };
@@ -25,7 +25,7 @@ describe('Fetch Recent Questions Use Case', () => {
   });
 
   it('Should be able to get a recent questions', async () => {
-    vi.spyOn(questionsRepository, 'find').mockResolvedValueOnce([
+    vi.spyOn(questionsRepository, 'findMany').mockResolvedValueOnce([
       makeFakeQuestion(),
       makeFakeQuestion(),
     ]);

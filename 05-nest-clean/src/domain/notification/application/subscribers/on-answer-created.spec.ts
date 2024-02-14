@@ -36,7 +36,7 @@ describe('On Answer Created', () => {
       async create() {},
     };
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
     };
@@ -50,7 +50,7 @@ describe('On Answer Created', () => {
       'execute',
     );
 
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion(),
     );
 

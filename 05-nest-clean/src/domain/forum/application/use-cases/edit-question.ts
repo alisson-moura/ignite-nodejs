@@ -34,7 +34,7 @@ export class EditQuestionUseCase {
     content,
     attachmentsIds,
   }: Request): Promise<Response> {
-    const question = await this.questionRepository.find(questionId);
+    const question = await this.questionRepository.findById(questionId);
 
     if (question == null) {
       return left(new ResourceNotFoundError());

@@ -1,10 +1,12 @@
 import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../app.module';
+import { AppModule } from '@/infra/app.module';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
 
-describe('(E2E) Controller Fetch Recent Questions', () => {
+describe('(E2E) Controller Create Question', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
   let accessToken: string;
 
   beforeAll(async () => {
@@ -12,6 +14,7 @@ describe('(E2E) Controller Fetch Recent Questions', () => {
       imports: [AppModule],
     }).compile();
     app = moduleRef.createNestApplication();
+    prisma = moduleRef.get(PrismaService);
     await app.init();
 
     // create account
@@ -27,26 +30,24 @@ describe('(E2E) Controller Fetch Recent Questions', () => {
       password: 'fake_password',
     });
     accessToken = body.access_token;
+  });
 
-    // create a question
-    await request(app.getHttpServer())
+  test('[POST] /questions', async () => {
+    const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         title: 'fake question',
         content: 'an fake question',
       });
-  });
 
-  test('[GET] /questions', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/questions')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send();
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({
-      questions: [expect.objectContaining({ title: 'fake question' })],
+    const questionOnDatabase = await prisma.question.findFirst({
+      where: {
+        title: 'fake question',
+      },
     });
+
+    expect(response.statusCode).toBe(201);
+    expect(questionOnDatabase).toBeTruthy();
   });
 });

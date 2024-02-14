@@ -38,7 +38,7 @@ const makeFakeAnswer = (answerId: string, questionId: string): Answer =>
 describe('Chose Question Best Answer Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
       async save() {},
@@ -55,7 +55,7 @@ describe('Chose Question Best Answer Use Case', () => {
     vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_question_id'),
     );
 
@@ -75,7 +75,7 @@ describe('Chose Question Best Answer Use Case', () => {
     vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_question_id'),
     );
 
@@ -91,7 +91,7 @@ describe('Chose Question Best Answer Use Case', () => {
     vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
 
     const result = await sut.execute({
       answerId: 'fake_answer_id',
@@ -102,7 +102,7 @@ describe('Chose Question Best Answer Use Case', () => {
   });
   it('should not be possible to choose a answer that does not exist', async () => {
     vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(null);
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
 
     const result = await sut.execute({
       answerId: 'fake_answer_id',

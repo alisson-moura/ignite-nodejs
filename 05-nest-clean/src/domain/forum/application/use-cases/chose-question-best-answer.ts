@@ -33,7 +33,7 @@ export class ChoseQuestionBestAnswer {
       return left(new ResourceNotFoundError());
     }
 
-    const question = await this.questionRepository.find(
+    const question = await this.questionRepository.findById(
       answer.questionId.toString(),
     );
     if (question == null) {

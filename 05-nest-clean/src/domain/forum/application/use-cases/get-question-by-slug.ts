@@ -15,7 +15,7 @@ export class GetQuestionBySlugUseCase {
   ) {}
 
   public async execute({ slug }: Request): Promise<Response> {
-    const question = await this.questionRepository.find(slug);
+    const question = await this.questionRepository.findBySlug(slug);
 
     if (question == null) {
       return left(new ResourceNotFoundError());

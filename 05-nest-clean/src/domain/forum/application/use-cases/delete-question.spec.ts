@@ -27,7 +27,7 @@ const makeFakeQuestion = (id: string): Question =>
 describe('Delete Question Use Case', () => {
   beforeEach(() => {
     questionRepository = {
-      async find() {
+      async findById() {
         return null;
       },
       async delete() {},
@@ -39,7 +39,7 @@ describe('Delete Question Use Case', () => {
   });
 
   it('should be able to delete a question', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_id'),
     );
     const result = await sut.execute({
@@ -58,7 +58,7 @@ describe('Delete Question Use Case', () => {
     expect(response.value).toBeInstanceOf(ResourceNotFoundError);
   });
   it('should throw a error when authorId is invalid', async () => {
-    vi.spyOn(questionRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
       makeFakeQuestion('fake_id'),
     );
     const response = await sut.execute({
