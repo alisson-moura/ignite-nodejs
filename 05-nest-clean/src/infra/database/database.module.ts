@@ -15,7 +15,7 @@ import { PrismaQuestionRepository } from './repositories/forum/prisma-question-r
     PrismaAnswersRepository,
     PrismaQuestionAttachmentRepository,
     PrismaQuestionCommentRepository,
-    PrismaQuestionRepository
+    PrismaQuestionRepository,
   ],
   exports: [
     PrismaService,
@@ -24,7 +24,7 @@ import { PrismaQuestionRepository } from './repositories/forum/prisma-question-r
     PrismaAnswersRepository,
     PrismaQuestionAttachmentRepository,
     PrismaQuestionCommentRepository,
-    PrismaQuestionRepository
-  ]
+    PrismaQuestionRepository,
+  ],
 })
-export class HttpModule { }
+export class HttpModule {}

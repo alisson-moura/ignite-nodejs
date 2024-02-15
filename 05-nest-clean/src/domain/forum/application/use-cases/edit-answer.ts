@@ -1,12 +1,9 @@
 import { type Either, left, right } from '@/core/either';
 import { type Answer } from '../../enterprise/entities/answer';
-import {
-  type FindAnswerByIdRepository,
-  type SaveAnswerRepository,
-} from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { NotAllowedError } from './errors/not-allowed';
 import { ResourceNotFoundError } from './errors/resource-not-found';
-import { FindAttachmentByAnswerIdRepository } from '../repositories/answer-attachment-repository';
+import { AnswerAttachmentRepository } from '../repositories/answer-attachment-repository';
 import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list';
 import { AnswerAttachment } from '../../enterprise/entities/answer-attachment';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
@@ -27,9 +24,8 @@ type Response = Either<
 
 export class EditAnswerUseCase {
   constructor(
-    private readonly answerRepository: FindAnswerByIdRepository &
-      SaveAnswerRepository,
-    private readonly attachmentRepository: FindAttachmentByAnswerIdRepository,
+    private readonly answerRepository: AnswersRepository,
+    private readonly attachmentRepository: AnswerAttachmentRepository,
   ) {}
 
   public async execute({
@@ -38,7 +34,7 @@ export class EditAnswerUseCase {
     content,
     attachmentsIds,
   }: Request): Promise<Response> {
-    const answer = await this.answerRepository.find(answerId);
+    const answer = await this.answerRepository.findById(answerId);
 
     if (answer == null) {
       return left(new ResourceNotFoundError());
@@ -48,9 +44,8 @@ export class EditAnswerUseCase {
       return left(new NotAllowedError());
     }
 
-    const currentAttachments = await this.attachmentRepository.findByAnswer(
-      answer.id.toString(),
-    );
+    const currentAttachments =
+      await this.attachmentRepository.findManyByAnswerId(answer.id.toString());
     const attachmentList = new AnswerAttachmentList(currentAttachments);
     const answerAttachments = attachmentsIds.map((attachmentId) => {
       return AnswerAttachment.create({

@@ -6,5 +6,8 @@ export abstract class AnswersRepository {
   abstract findById: (id: string) => Promise<Answer | null>;
   abstract delete: (answer: Answer) => Promise<void>;
   abstract save: (answer: Answer) => Promise<void>;
-  abstract findManyByQuestionId: (questionId: string, pagination: PaginationParams) => Promise<Answer[]>;
+  abstract findManyByQuestionId: (
+    questionId: string,
+    pagination: PaginationParams,
+  ) => Promise<Answer[]>;
 }

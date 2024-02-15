@@ -1,13 +1,16 @@
 import { CommentOnQuestionUseCase } from './comment-on-question';
-import { type FindQuestionByIdRepository } from '../repositories/question-repository';
-import { type CreateQuestionCommentRepository } from '../repositories/question-comment-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
+import { QuestionCommentRepository } from '../repositories/question-comment-repository';
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
 import { ResourceNotFoundError } from './errors/resource-not-found';
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comment-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
 
-let questionRepository: FindQuestionByIdRepository;
-let commentRepository: CreateQuestionCommentRepository;
+let questionRepository: QuestionsRepository;
+let commentRepository: QuestionCommentRepository;
 let sut: CommentOnQuestionUseCase;
 
 const makeFakeQuestion = (): Question =>
@@ -22,14 +25,10 @@ const makeFakeQuestion = (): Question =>
 
 describe('Comment on Question', () => {
   beforeEach(() => {
-    questionRepository = {
-      async findById() {
-        return null;
-      },
-    };
-    commentRepository = {
-      async create() {},
-    };
+    questionRepository = new InMemoryQuestionsRepository(
+      new InMemoryQuestionAttachmentsRepository(),
+    );
+    commentRepository = new InMemoryQuestionCommentsRepository();
     sut = new CommentOnQuestionUseCase(questionRepository, commentRepository);
   });
 

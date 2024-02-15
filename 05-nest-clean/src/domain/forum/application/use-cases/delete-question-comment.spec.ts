@@ -1,14 +1,11 @@
-import {
-  type DeleteQuestionCommentRepository,
-  type FindQuestionCommentByIdRepository,
-} from '../repositories/question-comment-repository';
+import { QuestionCommentRepository } from '../repositories/question-comment-repository';
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { DeleteQuestionCommentUseCase } from './delete-question-comment';
 import { QuestionComment } from '../../enterprise/entities/question-comment';
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comment-repository';
 
-let commentRepository: FindQuestionCommentByIdRepository &
-  DeleteQuestionCommentRepository;
+let commentRepository: QuestionCommentRepository;
 let sut: DeleteQuestionCommentUseCase;
 
 const makeFakeComment = (): QuestionComment =>
@@ -23,19 +20,14 @@ const makeFakeComment = (): QuestionComment =>
 
 describe('Delete Question Comment Use Case', () => {
   beforeEach(() => {
-    commentRepository = {
-      async delete() {},
-      async find() {
-        return null;
-      },
-    };
+    commentRepository = new InMemoryQuestionCommentsRepository();
     sut = new DeleteQuestionCommentUseCase(commentRepository);
   });
 
   it('should be able to delete question comment', async () => {
     const fakeComment = makeFakeComment();
     const spyOnDeleteCommentRepository = vi.spyOn(commentRepository, 'delete');
-    vi.spyOn(commentRepository, 'find').mockResolvedValueOnce(fakeComment);
+    vi.spyOn(commentRepository, 'findById').mockResolvedValueOnce(fakeComment);
 
     await sut.execute({
       commentId: 'fake_comment_id',

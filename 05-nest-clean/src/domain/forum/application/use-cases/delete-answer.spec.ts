@@ -1,17 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
-import {
-  type DeleteAnswerRepository,
-  type FindAnswerByIdRepository,
-} from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { DeleteAnswerUseCase } from './delete-answer';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
-import { DeleteAttachmentByAnswerIdRepository } from '../repositories/answer-attachment-repository';
+import { AnswerAttachmentRepository } from '../repositories/answer-attachment-repository';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
 
-let answerRepository: DeleteAnswerRepository & FindAnswerByIdRepository;
-let attachmentRepository: DeleteAttachmentByAnswerIdRepository;
+let answerRepository: AnswersRepository;
+let attachmentRepository: AnswerAttachmentRepository;
 let sut: DeleteAnswerUseCase;
 
 const makeFakeAnswer = (id: string): Answer =>
@@ -26,20 +25,13 @@ const makeFakeAnswer = (id: string): Answer =>
 
 describe('Delete Answer Use Case', () => {
   beforeEach(() => {
-    answerRepository = {
-      async find() {
-        return null;
-      },
-      async delete() {},
-    };
-    attachmentRepository = {
-      async delete() {},
-    };
+    attachmentRepository = new InMemoryAnswerAttachmentsRepository();
+    answerRepository = new InMemoryAnswersRepository(attachmentRepository);
     sut = new DeleteAnswerUseCase(answerRepository, attachmentRepository);
   });
 
   it('should be able to delete a answer', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_id'),
     );
     const result = await sut.execute({
@@ -59,7 +51,7 @@ describe('Delete Answer Use Case', () => {
   });
 
   it('should throw a error when authorId is invalid', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_id'),
     );
     const result = await sut.execute({

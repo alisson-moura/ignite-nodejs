@@ -1,9 +1,9 @@
 import { right, type Either, left } from '@/core/either';
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
-import { type CreateAnswerRepository } from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
-import { type FindQuestionByIdRepository } from '../repositories/question-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { AnswerAttachment } from '../../enterprise/entities/answer-attachment';
 import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list';
 
@@ -18,8 +18,8 @@ type Response = Either<ResourceNotFoundError, { answer: Answer }>;
 
 export class AnswerQuestionUseCase {
   constructor(
-    private readonly answersRepository: CreateAnswerRepository,
-    private readonly questionRepository: FindQuestionByIdRepository,
+    private readonly answersRepository: AnswersRepository,
+    private readonly questionRepository: QuestionsRepository,
   ) {}
 
   public async execute({

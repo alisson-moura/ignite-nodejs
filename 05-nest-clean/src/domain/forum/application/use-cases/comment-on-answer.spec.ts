@@ -1,13 +1,16 @@
-import { type FindAnswerByIdRepository } from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
 import { CommentOnAnswerUseCase } from './comment-on-answer';
-import { type CreateAnswerCommentRepository } from '../repositories/answers-comments-repository';
+import { AnswerCommentRepository } from '../repositories/answers-comments-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
+import { InMemoryAnswerCommentsRepository } from 'test/repositories/in-memory-answer-comments-repository';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
 
-let answerRepository: FindAnswerByIdRepository;
-let commentRepository: CreateAnswerCommentRepository;
+let answerRepository: AnswersRepository;
+let commentRepository: AnswerCommentRepository;
 let sut: CommentOnAnswerUseCase;
 
 const makeFakeAnswer = (): Answer =>
@@ -22,21 +25,17 @@ const makeFakeAnswer = (): Answer =>
 
 describe('Comment on Answer', () => {
   beforeEach(() => {
-    answerRepository = {
-      async find() {
-        return null;
-      },
-    };
-    commentRepository = {
-      async create() {},
-    };
+    answerRepository = new InMemoryAnswersRepository(
+      new InMemoryAnswerAttachmentsRepository(),
+    );
+    commentRepository = new InMemoryAnswerCommentsRepository();
     sut = new CommentOnAnswerUseCase(answerRepository, commentRepository);
   });
 
   it('should be able to comment on answer', async () => {
     const fakeAnswer = makeFakeAnswer();
     const spyOnCreateCommentRepository = vi.spyOn(commentRepository, 'create');
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(fakeAnswer);
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(fakeAnswer);
 
     const result = await sut.execute({
       answerId: 'fake_question_id',
@@ -49,7 +48,7 @@ describe('Comment on Answer', () => {
   });
 
   it('should return an erro when answerId is invalid', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(null);
 
     const result = await sut.execute({
       answerId: 'fake_question_id',

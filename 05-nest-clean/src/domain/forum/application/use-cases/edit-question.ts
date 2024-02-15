@@ -1,11 +1,8 @@
 import { type Either, left, right } from '@/core/either';
-import {
-  type SaveQuestionRepository,
-  type FindQuestionByIdRepository,
-} from '../repositories/question-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { NotAllowedError } from './errors/not-allowed';
 import { ResourceNotFoundError } from './errors/resource-not-found';
-import { type FindAttachmentByQuestionIdRepository } from '../repositories/question-attachment-repository';
+import { QuestionAttachmentRepository } from '../repositories/question-attachment-repository';
 import { QuestionAttachmentList } from '../../enterprise/entities/question-attachment-list';
 import { QuestionAttachment } from '../../enterprise/entities/question-attachment';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
@@ -22,9 +19,8 @@ type Response = Either<ResourceNotFoundError | NotAllowedError, void>;
 
 export class EditQuestionUseCase {
   constructor(
-    private readonly questionRepository: FindQuestionByIdRepository &
-      SaveQuestionRepository,
-    private readonly attachmentRepository: FindAttachmentByQuestionIdRepository,
+    private readonly questionRepository: QuestionsRepository,
+    private readonly attachmentRepository: QuestionAttachmentRepository,
   ) {}
 
   public async execute({
@@ -44,9 +40,10 @@ export class EditQuestionUseCase {
       return left(new NotAllowedError());
     }
 
-    const currentAttachments = await this.attachmentRepository.findByQuestion(
-      question.id.toString(),
-    );
+    const currentAttachments =
+      await this.attachmentRepository.findManyByQuestionId(
+        question.id.toString(),
+      );
     const attachmentList = new QuestionAttachmentList(currentAttachments);
     const questionAttachments = attachmentsIds.map((attachmentId) => {
       return QuestionAttachment.create({

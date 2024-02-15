@@ -1,18 +1,17 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Answer } from '../../enterprise/entities/answer';
-import {
-  type FindAnswerByIdRepository,
-  type SaveAnswerRepository,
-} from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { EditAnswerUseCase } from './edit-answer';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
-import { FindAttachmentByAnswerIdRepository } from '../repositories/answer-attachment-repository';
+import { AnswerAttachmentRepository } from '../repositories/answer-attachment-repository';
 import { AnswerAttachment } from '../../enterprise/entities/answer-attachment';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
 
-let answerRepository: SaveAnswerRepository & FindAnswerByIdRepository;
-let attachmentRepository: FindAttachmentByAnswerIdRepository;
+let answerRepository: AnswersRepository;
+let attachmentRepository: AnswerAttachmentRepository;
 let sut: EditAnswerUseCase;
 
 const makeFakeAnswer = (id: string): Answer =>
@@ -27,22 +26,13 @@ const makeFakeAnswer = (id: string): Answer =>
 
 describe('Edit Answer Use Case', () => {
   beforeEach(() => {
-    answerRepository = {
-      async find() {
-        return null;
-      },
-      async save() {},
-    };
-    attachmentRepository = {
-      async findByAnswer() {
-        return [];
-      },
-    };
+    attachmentRepository = new InMemoryAnswerAttachmentsRepository();
+    answerRepository = new InMemoryAnswersRepository(attachmentRepository);
     sut = new EditAnswerUseCase(answerRepository, attachmentRepository);
   });
 
   it('should be able to edit a answer', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_id'),
     );
     const response = await sut.execute({
@@ -69,7 +59,7 @@ describe('Edit Answer Use Case', () => {
   });
 
   it('should throw a error when authorId is invalid', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_id'),
     );
     const result = await sut.execute({
@@ -83,10 +73,10 @@ describe('Edit Answer Use Case', () => {
   });
 
   it('should be able to edit a answer with attachments', async () => {
-    vi.spyOn(answerRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answerRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_id'),
     );
-    vi.spyOn(attachmentRepository, 'findByAnswer').mockResolvedValueOnce([
+    vi.spyOn(attachmentRepository, 'findManyByAnswerId').mockResolvedValueOnce([
       AnswerAttachment.create({
         answerId: new UniqueEntityId('fake_id'),
         attachmentId: new UniqueEntityId('1'),

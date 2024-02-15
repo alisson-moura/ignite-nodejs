@@ -1,10 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
-import { type FindByQuestionIdRepository } from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { FetchQuestionAnswersUseCase } from './fetch-question-answers';
 import { Answer } from '../../enterprise/entities/answer';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
 
-let answersRepository: FindByQuestionIdRepository;
+let answersRepository: AnswersRepository;
 let sut: FetchQuestionAnswersUseCase;
 
 const makeFakeAnswer = (questionId: string): Answer =>
@@ -16,16 +18,14 @@ const makeFakeAnswer = (questionId: string): Answer =>
 
 describe('Fetch Questions Answers Use Case', () => {
   beforeEach(() => {
-    answersRepository = {
-      async findByQuestion() {
-        return [];
-      },
-    };
+    answersRepository = new InMemoryAnswersRepository(
+      new InMemoryAnswerAttachmentsRepository(),
+    );
     sut = new FetchQuestionAnswersUseCase(answersRepository);
   });
 
   it('Should be able to get a question answers', async () => {
-    vi.spyOn(answersRepository, 'findByQuestion').mockResolvedValueOnce([
+    vi.spyOn(answersRepository, 'findManyByQuestionId').mockResolvedValueOnce([
       makeFakeAnswer('fake_question_id'),
       makeFakeAnswer('fake_question_id'),
     ]);

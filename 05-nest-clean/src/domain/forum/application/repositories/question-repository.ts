@@ -7,5 +7,5 @@ export abstract class QuestionsRepository {
   abstract findById: (id: string) => Promise<Question | null>;
   abstract delete: (question: Question) => Promise<void>;
   abstract save: (question: Question) => Promise<void>;
-  abstract findManyRecent: ({ page }: PaginationParams) => Promise<Question[]>
+  abstract findManyRecent: ({ page }: PaginationParams) => Promise<Question[]>;
 }

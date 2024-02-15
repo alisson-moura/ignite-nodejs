@@ -1,12 +1,14 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
-import { type FindQuestionBySlugRepository } from '../repositories/question-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { GetQuestionBySlugUseCase } from './get-question-by-slug';
 import { Slug } from '../../enterprise/entities/value-objects/slug';
 import { ResourceNotFoundError } from './errors/resource-not-found';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
 
-let questionRepository: FindQuestionBySlugRepository;
+let questionRepository: QuestionsRepository;
 let sut: GetQuestionBySlugUseCase;
 
 const makeFakeQuestion = (slug: Slug): Question =>
@@ -19,11 +21,9 @@ const makeFakeQuestion = (slug: Slug): Question =>
 
 describe('Create Question Use Case', () => {
   beforeEach(() => {
-    questionRepository = {
-      async findBySlug() {
-        return null;
-      },
-    };
+    questionRepository = new InMemoryQuestionsRepository(
+      new InMemoryQuestionAttachmentsRepository(),
+    );
     sut = new GetQuestionBySlugUseCase(questionRepository);
   });
 

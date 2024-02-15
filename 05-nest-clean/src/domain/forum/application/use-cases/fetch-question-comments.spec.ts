@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { FetchQuestionCommentsUseCase } from './fetch-question-comments';
-import { type FindManyByQuestionIdRepository } from '../repositories/question-comment-repository';
+import { QuestionCommentRepository } from '../repositories/question-comment-repository';
 import { QuestionComment } from '../../enterprise/entities/question-comment';
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comment-repository';
 
-let questionCommentsRepository: FindManyByQuestionIdRepository;
+let questionCommentsRepository: QuestionCommentRepository;
 let sut: FetchQuestionCommentsUseCase;
 
 const makeFakeComment = (): QuestionComment =>
@@ -19,19 +20,15 @@ const makeFakeComment = (): QuestionComment =>
 
 describe('Fetch  Question Comments Use Case', () => {
   beforeEach(() => {
-    questionCommentsRepository = {
-      async findMany() {
-        return [];
-      },
-    };
+    questionCommentsRepository = new InMemoryQuestionCommentsRepository();
     sut = new FetchQuestionCommentsUseCase(questionCommentsRepository);
   });
 
   it('Should be able to fetch question comments', async () => {
-    vi.spyOn(questionCommentsRepository, 'findMany').mockResolvedValueOnce([
-      makeFakeComment(),
-      makeFakeComment(),
-    ]);
+    vi.spyOn(
+      questionCommentsRepository,
+      'findManyByQuestionId',
+    ).mockResolvedValueOnce([makeFakeComment(), makeFakeComment()]);
 
     const result = await sut.execute({
       questionId: 'fake_question_id',

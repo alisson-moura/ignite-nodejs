@@ -1,17 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
-import {
-  type SaveQuestionRepository,
-  type FindQuestionByIdRepository,
-} from '../repositories/question-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { EditQuestionUseCase } from './edit-question';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { NotAllowedError } from './errors/not-allowed';
-import { type FindAttachmentByQuestionIdRepository } from '../repositories/question-attachment-repository';
+import { QuestionAttachmentRepository } from '../repositories/question-attachment-repository';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
 
-let questionRepository: FindQuestionByIdRepository & SaveQuestionRepository;
-let attachmentRepository: FindAttachmentByQuestionIdRepository;
+let questionRepository: QuestionsRepository;
+let attachmentRepository: QuestionAttachmentRepository;
 let sut: EditQuestionUseCase;
 
 const makeFakeQuestion = (id: string): Question =>
@@ -26,18 +25,8 @@ const makeFakeQuestion = (id: string): Question =>
 
 describe('Edit Question Use Case', () => {
   beforeEach(() => {
-    questionRepository = {
-      async findById() {
-        return null;
-      },
-      async save() {},
-    };
-
-    attachmentRepository = {
-      async findByQuestion() {
-        return [];
-      },
-    };
+    attachmentRepository = new InMemoryQuestionAttachmentsRepository();
+    questionRepository = new InMemoryQuestionsRepository(attachmentRepository);
     sut = new EditQuestionUseCase(questionRepository, attachmentRepository);
   });
 

@@ -1,18 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Question } from '../../enterprise/entities/question';
-import {
-  type SaveQuestionRepository,
-  type FindQuestionByIdRepository,
-} from '../repositories/question-repository';
-import { type FindAnswerByIdRepository } from '../repositories/answers-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { ChoseQuestionBestAnswer } from './chose-question-best-answer';
 import { Answer } from '../../enterprise/entities/answer';
 import { NotAllowedError } from './errors/not-allowed';
 import { ResourceNotFoundError } from './errors/resource-not-found';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
 
-let questionRepository: FindQuestionByIdRepository & SaveQuestionRepository;
-let answersRepository: FindAnswerByIdRepository;
+let questionRepository: QuestionsRepository;
+let answersRepository: AnswersRepository;
 let sut: ChoseQuestionBestAnswer;
 
 const makeFakeQuestion = (id: string): Question =>
@@ -37,22 +38,17 @@ const makeFakeAnswer = (answerId: string, questionId: string): Answer =>
 
 describe('Chose Question Best Answer Use Case', () => {
   beforeEach(() => {
-    questionRepository = {
-      async findById() {
-        return null;
-      },
-      async save() {},
-    };
-    answersRepository = {
-      async find() {
-        return null;
-      },
-    };
+    answersRepository = new InMemoryAnswersRepository(
+      new InMemoryAnswerAttachmentsRepository(),
+    );
+    questionRepository = new InMemoryQuestionsRepository(
+      new InMemoryQuestionAttachmentsRepository(),
+    );
     sut = new ChoseQuestionBestAnswer(answersRepository, questionRepository);
   });
 
   it('should be able to chose the question best answer', async () => {
-    vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answersRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
     vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
@@ -72,7 +68,7 @@ describe('Chose Question Best Answer Use Case', () => {
   });
 
   it('should not be able to to choose another user question best answer', async () => {
-    vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answersRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
     vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(
@@ -88,7 +84,7 @@ describe('Chose Question Best Answer Use Case', () => {
   });
 
   it('should not be possible to choose a question that does not exist', async () => {
-    vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(
+    vi.spyOn(answersRepository, 'findById').mockResolvedValueOnce(
       makeFakeAnswer('fake_answer_id', 'fake_question_id'),
     );
     vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
@@ -101,7 +97,7 @@ describe('Chose Question Best Answer Use Case', () => {
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
   it('should not be possible to choose a answer that does not exist', async () => {
-    vi.spyOn(answersRepository, 'find').mockResolvedValueOnce(null);
+    vi.spyOn(answersRepository, 'findById').mockResolvedValueOnce(null);
     vi.spyOn(questionRepository, 'findById').mockResolvedValueOnce(null);
 
     const result = await sut.execute({

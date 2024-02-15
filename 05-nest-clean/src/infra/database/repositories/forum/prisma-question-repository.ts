@@ -9,56 +9,56 @@ import { PaginationParams } from '@/core/repositories/pagination';
 export class PrismaQuestionRepository implements QuestionRepository {
   constructor(private prisma: PrismaService) {}
   async create(question: Question): Promise<void> {
-    const data = PrismaQuestionMapper.toPrisma(question)
-    await this.prisma.question.create({ data })
+    const data = PrismaQuestionMapper.toPrisma(question);
+    await this.prisma.question.create({ data });
   }
   async findBySlug(slug: string): Promise<Question | null> {
     const dbQuestion = await this.prisma.question.findUnique({
       where: {
-        slug
-      }
-    })
+        slug,
+      },
+    });
     if (dbQuestion) {
-      return PrismaQuestionMapper.toDomain(dbQuestion)
+      return PrismaQuestionMapper.toDomain(dbQuestion);
     }
-    return null
+    return null;
   }
   async findById(id: string): Promise<Question | null> {
     const dbQuestion = await this.prisma.question.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     if (dbQuestion) {
-      return PrismaQuestionMapper.toDomain(dbQuestion)
+      return PrismaQuestionMapper.toDomain(dbQuestion);
     }
-    return null
+    return null;
   }
   async delete(question: Question): Promise<void> {
     await this.prisma.question.delete({
       where: {
-        id: question.id.toString()
-      }
-    })
+        id: question.id.toString(),
+      },
+    });
   }
   async save(question: Question): Promise<void> {
-    const data = PrismaQuestionMapper.toPrisma(question)
+    const data = PrismaQuestionMapper.toPrisma(question);
     await this.prisma.question.update({
       data,
       where: {
-        id: question.id.toString()
-      }
-    })
+        id: question.id.toString(),
+      },
+    });
   }
-  async findMany (params: PaginationParams): Promise<Question[]> {
+  async findMany(params: PaginationParams): Promise<Question[]> {
     const dbQuestions = await this.prisma.question.findMany({
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       take: 20,
-      skip: (params.page - 1) * 20
-    })
+      skip: (params.page - 1) * 20,
+    });
 
-    return dbQuestions.map(PrismaQuestionMapper.toDomain)
+    return dbQuestions.map(PrismaQuestionMapper.toDomain);
   }
 }

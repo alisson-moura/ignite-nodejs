@@ -1,14 +1,18 @@
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id';
-import { type CreateAnswerRepository } from '../repositories/answers-repository';
+import { AnswersRepository } from '../repositories/answers-repository';
 import { AnswerQuestionUseCase } from './answer-question';
-import { type FindQuestionByIdRepository } from '../repositories/question-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { faker } from '@faker-js/faker';
 import { Question } from '../../enterprise/entities/question';
 import { ResourceNotFoundError } from './errors/resource-not-found';
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answer-repository';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
 
 let sut: AnswerQuestionUseCase;
-let answersRepository: CreateAnswerRepository;
-let questionRepository: FindQuestionByIdRepository;
+let answersRepository: AnswersRepository;
+let questionRepository: QuestionsRepository;
 
 const makeFakeQuestion = (id: string): Question =>
   Question.create(
@@ -22,14 +26,12 @@ const makeFakeQuestion = (id: string): Question =>
 
 describe('Answer Question Use Case', () => {
   beforeEach(() => {
-    answersRepository = {
-      async create() {},
-    };
-    questionRepository = {
-      async findById() {
-        return null;
-      },
-    };
+    answersRepository = new InMemoryAnswersRepository(
+      new InMemoryAnswerAttachmentsRepository(),
+    );
+    questionRepository = new InMemoryQuestionsRepository(
+      new InMemoryQuestionAttachmentsRepository(),
+    );
     sut = new AnswerQuestionUseCase(answersRepository, questionRepository);
   });
 

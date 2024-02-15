@@ -1,8 +1,8 @@
 import { left, type Either, right } from '@/core/either';
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id';
 import { QuestionComment } from '../../enterprise/entities/question-comment';
-import { type CreateQuestionCommentRepository } from '../repositories/question-comment-repository';
-import { type FindQuestionByIdRepository } from '../repositories/question-repository';
+import { QuestionCommentRepository } from '../repositories/question-comment-repository';
+import { QuestionsRepository } from '../repositories/question-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface Request {
@@ -20,8 +20,8 @@ type Response = Either<
 
 export class CommentOnQuestionUseCase {
   constructor(
-    private readonly questionRepository: FindQuestionByIdRepository,
-    private readonly commentRepository: CreateQuestionCommentRepository,
+    private readonly questionRepository: QuestionsRepository,
+    private readonly commentRepository: QuestionCommentRepository,
   ) {}
 
   public async execute({
