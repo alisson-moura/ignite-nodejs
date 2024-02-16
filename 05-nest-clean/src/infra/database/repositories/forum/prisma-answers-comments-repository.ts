@@ -6,11 +6,11 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class PrismaAnswerCommentRepository implements AnswerCommentRepository {
   async create(comment: AnswerComment): Promise<void> {}
-  async find(id: string): Promise<AnswerComment | null> {
+  async findById(id: string): Promise<AnswerComment | null> {
     return null;
   }
   async delete(comment: AnswerComment): Promise<void> {}
-  async findMany(
+  async findManyByAnswerId(
     answerId: string,
     pagination: PaginationParams,
   ): Promise<AnswerComment[]> {

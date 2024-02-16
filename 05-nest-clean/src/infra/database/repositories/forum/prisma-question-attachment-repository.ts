@@ -6,8 +6,8 @@ import { Injectable } from '@nestjs/common';
 export class PrismaQuestionAttachmentRepository
   implements QuestionAttachmentRepository
 {
-  async findByQuestion(questionId: string): Promise<QuestionAttachment[]> {
+  async findManyByQuestionId(questionId: string): Promise<QuestionAttachment[]> {
     return [];
   }
-  async delete(questionId: string): Promise<void> {}
+  async deleteManyByQuestionId(questionId: string): Promise<void> {}
 }

@@ -1,13 +1,13 @@
 import { DomainEvents } from '@/core/events/domain-events';
 import { EventHandler } from '@/core/events/event-handler';
 import { SendNotificationUseCase } from '../use-cases/send-notification';
-import { FindAnswerByIdRepository } from '@/domain/forum/application/repositories/answers-repository';
+import { AnswersRepository } from '@/domain/forum/application/repositories/answers-repository';
 import { BestAnswerChosenEvent } from '@/domain/forum/enterprise/events/best-answer-chose-event';
 
 export class OnBestAnswerChosen implements EventHandler {
   constructor(
     private sendNotification: SendNotificationUseCase,
-    private answerRepository: FindAnswerByIdRepository,
+    private answerRepository: AnswersRepository,
   ) {
     this.setupSubscriptions();
   }
@@ -22,7 +22,7 @@ export class OnBestAnswerChosen implements EventHandler {
     question,
     bestAnswerId,
   }: BestAnswerChosenEvent) {
-    const answer = await this.answerRepository.find(bestAnswerId.toString());
+    const answer = await this.answerRepository.findById(bestAnswerId.toString());
 
     if (answer) {
       await this.sendNotification.execute({

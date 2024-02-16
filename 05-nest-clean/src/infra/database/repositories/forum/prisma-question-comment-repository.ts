@@ -8,11 +8,11 @@ export class PrismaQuestionCommentRepository
   implements QuestionCommentRepository
 {
   async create(comment: QuestionComment): Promise<void> {}
-  async find(id: string): Promise<QuestionComment | null> {
+  async findById(id: string): Promise<QuestionComment | null> {
     return null;
   }
   async delete(comment: QuestionComment): Promise<void> {}
-  async findMany(
+  async findManyByQuestionId(
     questionId: string,
     pagination: PaginationParams,
   ): Promise<QuestionComment[]> {
