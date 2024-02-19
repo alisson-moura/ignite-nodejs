@@ -1,5 +1,4 @@
-import { Controller, Get, Query, UseGuards, UsePipes } from '@nestjs/common';
-import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard';
+import { Controller, Get, Query, UsePipes } from '@nestjs/common';
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe';
 import { z } from 'zod';
 import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/fetch-recent-questions';
@@ -17,11 +16,10 @@ const paginationQuerySchema = z.object({
 type PaginationQuerySchema = z.infer<typeof paginationQuerySchema>;
 
 @Controller('/questions')
-@UseGuards(JwtAuthGuard)
 export class FetchRecentQuestionsController {
   constructor(
     private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase,
-  ) {}
+  ) { }
 
   @Get()
   @UsePipes(new ZodValidationPipe(paginationQuerySchema))
