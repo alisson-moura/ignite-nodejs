@@ -32,8 +32,8 @@ export class CreateQuestionController {
       authorId,
       title,
       content,
-      attachmentsIds: []
-    })
-    return result
+      attachmentsIds: [],
+    });
+    return result;
   }
 }

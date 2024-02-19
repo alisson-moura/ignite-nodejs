@@ -12,7 +12,7 @@ import { HttpModule } from './http/http.module';
       isGlobal: true,
     }),
     AuthModule,
-    HttpModule
+    HttpModule,
   ],
   controllers: [],
   providers: [PrismaService],

@@ -19,7 +19,9 @@ type PaginationQuerySchema = z.infer<typeof paginationQuerySchema>;
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
 export class FetchRecentQuestionsController {
-  constructor(private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase) { }
+  constructor(
+    private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase,
+  ) {}
 
   @Get()
   @UsePipes(new ZodValidationPipe(paginationQuerySchema))
@@ -28,16 +30,16 @@ export class FetchRecentQuestionsController {
     const perPage = 20;
 
     const result = await this.fetchRecentQuestionUseCase.execute({
-      page
-    })
+      page,
+    });
 
     if (result.isLeft()) {
-      throw new Error()
+      throw new Error();
     }
-    const { questions } = result.value
+    const { questions } = result.value;
 
     return {
-      questions: questions.map(QuestionPresenter.toHtpp)
-    }
+      questions: questions.map(QuestionPresenter.toHtpp),
+    };
   }
 }

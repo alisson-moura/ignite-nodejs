@@ -15,7 +15,11 @@ import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-case
     CreateQuestionController,
     FetchRecentQuestionsController,
   ],
-  providers: [PrismaService, CreateQuestionUseCase, FetchRecentQuestionsUseCase],
-  imports: [DatabaseModule]
+  providers: [
+    PrismaService,
+    CreateQuestionUseCase,
+    FetchRecentQuestionsUseCase,
+  ],
+  imports: [DatabaseModule],
 })
 export class HttpModule {}

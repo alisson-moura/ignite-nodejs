@@ -13,7 +13,7 @@ import { QuestionsRepository } from '@/domain/forum/application/repositories/que
     PrismaService,
     {
       provide: QuestionsRepository,
-      useClass: PrismaQuestionRepository
+      useClass: PrismaQuestionRepository,
     },
     PrismaAnswerAttachmentRepository,
     PrismaAnswerCommentRepository,
