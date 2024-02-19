@@ -3,6 +3,7 @@ import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe';
 import { z } from 'zod';
 import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/fetch-recent-questions';
+import { QuestionPresenter } from '../presenters/question-presenter';
 
 const paginationQuerySchema = z.object({
   page: z
@@ -18,7 +19,7 @@ type PaginationQuerySchema = z.infer<typeof paginationQuerySchema>;
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
 export class FetchRecentQuestionsController {
-  constructor(private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase) {}
+  constructor(private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase) { }
 
   @Get()
   @UsePipes(new ZodValidationPipe(paginationQuerySchema))
@@ -30,6 +31,13 @@ export class FetchRecentQuestionsController {
       page
     })
 
-    return result
+    if (result.isLeft()) {
+      throw new Error()
+    }
+    const { questions } = result.value
+
+    return {
+      questions: questions.map(QuestionPresenter.toHtpp)
+    }
   }
 }
