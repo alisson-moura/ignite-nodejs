@@ -7,6 +7,9 @@ import { FetchRecentQuestionsController } from './controllers/fetch-recent-quest
 import { CreateQuestionUseCase } from '@/domain/forum/application/use-cases/create-question';
 import { DatabaseModule } from '../database/database.module';
 import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/fetch-recent-questions';
+import { CryptographyModule } from '../cryptography/cryptography.module';
+import { RegisterStudentUseCase } from '@/domain/forum/application/use-cases/register-student';
+import { AuthStudentUseCase } from '@/domain/forum/application/use-cases/auth-student';
 
 @Module({
   controllers: [
@@ -19,7 +22,9 @@ import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-case
     PrismaService,
     CreateQuestionUseCase,
     FetchRecentQuestionsUseCase,
+    RegisterStudentUseCase,
+    AuthStudentUseCase
   ],
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, CryptographyModule],
 })
 export class HttpModule {}
