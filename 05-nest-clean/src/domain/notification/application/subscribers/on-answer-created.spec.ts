@@ -5,9 +5,11 @@ import { DomainEvents } from '@/core/events/domain-events';
 import { Answer } from '@/domain/forum/enterprise/entities/answer';
 import { SendNotificationUseCase } from '../use-cases/send-notification';
 import { CreateNotificationRepository } from '../repositories/notification-repository';
-import { FindQuestionByIdRepository } from '@/domain/forum/application/repositories/question-repository';
+import { QuestionsRepository} from '@/domain/forum/application/repositories/question-repository';
 import { Question } from '@/domain/forum/enterprise/entities/question';
 import { waitFor } from '@/utils/wait-for';
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachment-repository';
 
 const makeFakeAnswer = (): Answer =>
   Answer.create({
@@ -26,7 +28,7 @@ const makeFakeQuestion = (): Question =>
     new UniqueEntityId('fake_question_id'),
   );
 
-let questionRepository: FindQuestionByIdRepository;
+let questionRepository: QuestionsRepository;
 let notificationRepository: CreateNotificationRepository;
 let sendNotificationUseCase: SendNotificationUseCase;
 
@@ -35,11 +37,7 @@ describe('On Answer Created', () => {
     notificationRepository = {
       async create() {},
     };
-    questionRepository = {
-      async findById() {
-        return null;
-      },
-    };
+    questionRepository = new InMemoryQuestionsRepository(new InMemoryQuestionAttachmentsRepository())
     sendNotificationUseCase = new SendNotificationUseCase(
       notificationRepository,
     );
