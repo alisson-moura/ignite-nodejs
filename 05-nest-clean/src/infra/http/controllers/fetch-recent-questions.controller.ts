@@ -19,7 +19,7 @@ type PaginationQuerySchema = z.infer<typeof paginationQuerySchema>;
 export class FetchRecentQuestionsController {
   constructor(
     private fetchRecentQuestionUseCase: FetchRecentQuestionsUseCase,
-  ) { }
+  ) {}
 
   @Get()
   @UsePipes(new ZodValidationPipe(paginationQuerySchema))

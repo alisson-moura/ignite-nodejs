@@ -23,7 +23,7 @@ import { AuthStudentUseCase } from '@/domain/forum/application/use-cases/auth-st
     CreateQuestionUseCase,
     FetchRecentQuestionsUseCase,
     RegisterStudentUseCase,
-    AuthStudentUseCase
+    AuthStudentUseCase,
   ],
   imports: [DatabaseModule, CryptographyModule],
 })

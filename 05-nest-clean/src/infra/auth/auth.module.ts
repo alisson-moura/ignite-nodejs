@@ -25,6 +25,10 @@ import { EnvModule } from '../env/env.module';
       },
     }),
   ],
-  providers: [JwtStrategy, { provide: APP_GUARD, useClass: JwtAuthGuard }, EnvService]
+  providers: [
+    JwtStrategy,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    EnvService,
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

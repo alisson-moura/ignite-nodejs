@@ -5,7 +5,7 @@ import { DomainEvents } from '@/core/events/domain-events';
 import { Answer } from '@/domain/forum/enterprise/entities/answer';
 import { SendNotificationUseCase } from '../use-cases/send-notification';
 import { CreateNotificationRepository } from '../repositories/notification-repository';
-import { QuestionsRepository} from '@/domain/forum/application/repositories/question-repository';
+import { QuestionsRepository } from '@/domain/forum/application/repositories/question-repository';
 import { Question } from '@/domain/forum/enterprise/entities/question';
 import { waitFor } from '@/utils/wait-for';
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository';
@@ -37,7 +37,9 @@ describe('On Answer Created', () => {
     notificationRepository = {
       async create() {},
     };
-    questionRepository = new InMemoryQuestionsRepository(new InMemoryQuestionAttachmentsRepository())
+    questionRepository = new InMemoryQuestionsRepository(
+      new InMemoryQuestionAttachmentsRepository(),
+    );
     sendNotificationUseCase = new SendNotificationUseCase(
       notificationRepository,
     );

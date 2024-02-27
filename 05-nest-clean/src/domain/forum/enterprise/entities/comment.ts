@@ -19,7 +19,7 @@ export abstract class Comment<
     return this.props.createdAt;
   }
 
-  get updatedAt(): Date | undefined | null{
+  get updatedAt(): Date | undefined | null {
     return this.props.updatedAt;
   }
 

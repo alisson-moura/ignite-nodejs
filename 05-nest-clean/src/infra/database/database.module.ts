@@ -30,7 +30,7 @@ import { PrismaStudentsRepository } from './repositories/forum/prisma-student-re
     PrismaQuestionAttachmentRepository,
     PrismaQuestionCommentRepository,
     QuestionsRepository,
-    StudentRepository
+    StudentRepository,
   ],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}

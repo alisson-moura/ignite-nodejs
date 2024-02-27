@@ -1,4 +1,8 @@
-import { BadRequestException, ConflictException, UsePipes } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  UsePipes,
+} from '@nestjs/common';
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe';
 import { z } from 'zod';
@@ -19,20 +23,20 @@ type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>;
 @Controller('/accounts')
 @Public()
 export class CreateAccountController {
-  constructor(private registerStudentUseCase: RegisterStudentUseCase) { }
+  constructor(private registerStudentUseCase: RegisterStudentUseCase) {}
 
   @Post()
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(createAccountBodySchema))
   async handle(@Body() body: CreateAccountBodySchema) {
-    const result = await this.registerStudentUseCase.execute(body)
+    const result = await this.registerStudentUseCase.execute(body);
     if (result.isLeft()) {
-      const error = result.value
+      const error = result.value;
       switch (error.constructor) {
         case StudentAlreadyExistsError:
-          throw new ConflictException(error.message)
+          throw new ConflictException(error.message);
         default:
-          throw new BadRequestException(error.message)
+          throw new BadRequestException(error.message);
       }
     }
   }
