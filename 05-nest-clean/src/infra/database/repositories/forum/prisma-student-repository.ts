@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { Student } from '@/domain/forum/enterprise/entities/student'
-import { PrismaStudentMapper } from './mappers/prisma-student-mapper'
-import { StudentRepository } from '@/domain/forum/application/repositories/student-repository'
-import { PrismaService } from '../../prisma/prisma.service'
+import { Injectable } from '@nestjs/common';
+import { Student } from '@/domain/forum/enterprise/entities/student';
+import { PrismaStudentMapper } from './mappers/prisma-student-mapper';
+import { StudentRepository } from '@/domain/forum/application/repositories/student-repository';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class PrismaStudentsRepository implements StudentRepository {
@@ -13,20 +13,20 @@ export class PrismaStudentsRepository implements StudentRepository {
       where: {
         email,
       },
-    })
+    });
 
     if (!student) {
-      return null
+      return null;
     }
 
-    return PrismaStudentMapper.toDomain(student)
+    return PrismaStudentMapper.toDomain(student);
   }
 
   async create(student: Student): Promise<void> {
-    const data = PrismaStudentMapper.toPrisma(student)
+    const data = PrismaStudentMapper.toPrisma(student);
 
     await this.prisma.user.create({
       data,
-    })
+    });
   }
 }
