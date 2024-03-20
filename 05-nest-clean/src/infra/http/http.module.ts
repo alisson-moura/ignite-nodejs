@@ -10,6 +10,8 @@ import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-case
 import { CryptographyModule } from '../cryptography/cryptography.module';
 import { RegisterStudentUseCase } from '@/domain/forum/application/use-cases/register-student';
 import { AuthStudentUseCase } from '@/domain/forum/application/use-cases/auth-student';
+import { GetQuestionBySlugController } from './controllers/get-questions-by-slug.controller';
+import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/get-question-by-slug';
 
 @Module({
   controllers: [
@@ -17,6 +19,7 @@ import { AuthStudentUseCase } from '@/domain/forum/application/use-cases/auth-st
     AuthenticateController,
     CreateQuestionController,
     FetchRecentQuestionsController,
+    GetQuestionBySlugController
   ],
   providers: [
     PrismaService,
@@ -24,6 +27,7 @@ import { AuthStudentUseCase } from '@/domain/forum/application/use-cases/auth-st
     FetchRecentQuestionsUseCase,
     RegisterStudentUseCase,
     AuthStudentUseCase,
+    GetQuestionBySlugUseCase
   ],
   imports: [DatabaseModule, CryptographyModule],
 })
