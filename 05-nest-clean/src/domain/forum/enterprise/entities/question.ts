@@ -6,7 +6,7 @@ import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { QuestionAttachmentList } from './question-attachment-list';
 import { BestAnswerChosenEvent } from '../events/best-answer-chose-event';
 
-interface QuestionProps {
+export interface QuestionProps {
   authorId: UniqueEntityId;
   bestAnswerId?: UniqueEntityId | null;
   title: string;

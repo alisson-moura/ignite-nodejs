@@ -2,12 +2,9 @@ import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
 import { QuestionPresenter } from '../presenters/question-presenter';
 import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/get-question-by-slug';
 
-
 @Controller('/questions/:slug')
 export class GetQuestionBySlugController {
-  constructor(
-    private getQuestionBySlug: GetQuestionBySlugUseCase,
-  ) { }
+  constructor(private getQuestionBySlug: GetQuestionBySlugUseCase) {}
 
   @Get()
   async handle(@Param('slug') slug: string) {
@@ -16,7 +13,7 @@ export class GetQuestionBySlugController {
     });
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      throw new BadRequestException();
     }
     const { question } = result.value;
 

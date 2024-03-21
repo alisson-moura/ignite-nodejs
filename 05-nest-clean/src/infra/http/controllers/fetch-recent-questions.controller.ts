@@ -25,7 +25,6 @@ export class FetchRecentQuestionsController {
   @UsePipes(new ZodValidationPipe(paginationQuerySchema))
   async handle(@Query() query: PaginationQuerySchema) {
     const { page } = query;
-    const perPage = 20;
 
     const result = await this.fetchRecentQuestionUseCase.execute({
       page,

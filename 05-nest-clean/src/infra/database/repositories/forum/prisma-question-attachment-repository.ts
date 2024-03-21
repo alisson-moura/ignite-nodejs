@@ -6,23 +6,24 @@ import { PrismaQuestionAttachmentMapper } from './mappers/prisma-question-attach
 
 @Injectable()
 export class PrismaQuestionAttachmentRepository
-  implements QuestionAttachmentRepository {
-  constructor(private prisma: PrismaService) { }
+  implements QuestionAttachmentRepository
+{
+  constructor(private prisma: PrismaService) {}
   async findManyByQuestionId(
     questionId: string,
   ): Promise<QuestionAttachment[]> {
     const questionAttachments = await this.prisma.attachment.findMany({
       where: {
-        questionId
-      }
-    })
+        questionId,
+      },
+    });
     return questionAttachments.map(PrismaQuestionAttachmentMapper.toDomain);
   }
   async deleteManyByQuestionId(questionId: string): Promise<void> {
     await this.prisma.attachment.deleteMany({
       where: {
-        questionId
-      }
-    })
+        questionId,
+      },
+    });
   }
 }

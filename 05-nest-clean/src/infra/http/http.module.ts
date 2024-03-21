@@ -19,7 +19,7 @@ import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/g
     AuthenticateController,
     CreateQuestionController,
     FetchRecentQuestionsController,
-    GetQuestionBySlugController
+    GetQuestionBySlugController,
   ],
   providers: [
     PrismaService,
@@ -27,7 +27,7 @@ import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/g
     FetchRecentQuestionsUseCase,
     RegisterStudentUseCase,
     AuthStudentUseCase,
-    GetQuestionBySlugUseCase
+    GetQuestionBySlugUseCase,
   ],
   imports: [DatabaseModule, CryptographyModule],
 })

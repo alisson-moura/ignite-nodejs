@@ -40,7 +40,7 @@ export class CreateQuestionController {
     });
     if (result.isLeft()) {
       const error = result.value;
-      throw new BadRequestException();
+      throw new BadRequestException(error);
     }
   }
 }
